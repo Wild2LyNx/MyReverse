@@ -3,13 +3,10 @@ package my;
 import java.awt.BorderLayout;
 import java.awt.Container;
 
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.PanelUI;
+
 
 public class Main {
 	public static void main(String[] args) {
@@ -25,13 +22,13 @@ public class Main {
 	private static void createAndShowGUI() {
 		JFrame frame = new JFrame ("MyRverse");
 		JPanel buttonPanel = new JPanel();
-		DataPanel dataPanel = new DataPanel();
+		DataPanel dataPanel = new DataPanel(frame);
 		dataPanel.setUpLayout();
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(900, 500);
 		
-		GameField field = new GameField();
+		GameField field = new GameField(frame);
 		
 		initButtons(buttonPanel);		
 		
