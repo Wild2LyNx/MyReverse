@@ -5,19 +5,37 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+
+
 
 public class GameField extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
 	int cellCount = 8;
-	double gameFieldSide, gameFieldX, gamefieldY, cellSide;
+	double gameFieldSide, gameFieldX, gamefieldY, cellSide;	
+	
+	ParameterizedArray<Cell> blackStones, whiteStones, freeCells, possibleCells;
+	
+	ParameterizedArray<Cell> allCells = new ParameterizedArray<Cell>(Cell.class, cellCount);
+	int moveCounter = 0;
 
 	public GameField(JFrame f) {
 		this.frame = f;
 		initDimensions();
+		initCells();
+	}
+
+	private void initCells() {
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++){				
+//				allCells [i][j] = new Cell(i, j, cellSide);
+				allCells.put(i, j, new Cell(i, j, cellSide));
+			}
+		}
 	}
 
 	private void initDimensions() {

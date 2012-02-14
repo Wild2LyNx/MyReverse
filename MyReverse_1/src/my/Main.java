@@ -29,6 +29,7 @@ public class Main {
 		frame.setSize(900, 500);
 		
 		GameField field = new GameField(frame);
+		field.addMouseListener(new GameListener(field));
 		
 		initButtons(buttonPanel);		
 		
