@@ -18,9 +18,9 @@ public class GameField extends JComponent {
 	int cellCount = 8;
 	double gameFieldSide, gameFieldX, gamefieldY, cellSide;	
 	
-	ParameterizedArray<Cell> blackStones, whiteStones, freeCells, possibleCells;
-	
-	ParameterizedArray<Cell> allCells = new ParameterizedArray<Cell>(Cell.class, cellCount);
+//	ParameterizedArray<Cell> blackStones, whiteStones, freeCells, possibleCells;	
+	Cell allCells [][] = new Cell [cellCount][cellCount];
+	Cell blackStones [][];
 	int moveCounter = 0;
 
 	public GameField(JFrame f) {
@@ -32,8 +32,8 @@ public class GameField extends JComponent {
 	private void initCells() {
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++){				
-//				allCells [i][j] = new Cell(i, j, cellSide);
-				allCells.put(i, j, new Cell(i, j, cellSide));
+				allCells [i][j] = new Cell(i, j, cellSide);
+//				allCells.put(i, j, new Cell(i, j, cellSide));
 			}
 		}
 	}
