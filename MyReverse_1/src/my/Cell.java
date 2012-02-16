@@ -20,12 +20,18 @@ public class Cell {
 		g.draw(new Rectangle2D.Double(fieldX + relativeX, fieldY + relativeY,
 				side, side));
 		if (!free) {			
-			g.draw(new Ellipse2D.Double(fieldX + relativeX + 3, fieldY
-					+ relativeY + 3, side - 6, side - 6));
+//			g.draw(new Ellipse2D.Double(fieldX + relativeX + 3, fieldY
+//					+ relativeY + 3, side - 6, side - 6));
 			g.setColor(stoneColor);
 			g.fill(new Ellipse2D.Double(fieldX + relativeX + 4, fieldY
 					+ relativeY + 4, side - 7, side - 7));
 		}
+	}
+
+	public void makeBusy(int descriptor) {
+		free = false;
+		if (descriptor == 1) stoneColor = Color.BLACK;	
+		if (descriptor == 2) stoneColor = Color.WHITE;
 	}
 
 }

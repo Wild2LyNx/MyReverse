@@ -12,9 +12,8 @@ public class GameListener implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mouseClicked(MouseEvent e) {
+//		field.findCell(e.getX(), e.getY());
 	}
 
 	@Override
