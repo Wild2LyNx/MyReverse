@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 public class Cell {
 	double relativeX, relativeY, side;
+	int i_index, j_index, descriptor;
+	
 	boolean free = true;
 	Color stoneColor = Color.RED;
 
@@ -14,6 +17,8 @@ public class Cell {
 		this.side = s;
 		this.relativeX = i * s;
 		this.relativeY = j * s;
+		this.i_index = i;
+		this.j_index = j;		
 	}
 
 	public void paint(double fieldX, double fieldY, Graphics2D g) {
@@ -30,8 +35,9 @@ public class Cell {
 
 	public void makeBusy(int descriptor) {
 		free = false;
-		if (descriptor == 1) stoneColor = Color.BLACK;	
-		if (descriptor == 2) stoneColor = Color.WHITE;
+		this.descriptor = descriptor;
+		if (descriptor == 0) stoneColor = Color.BLACK;	
+		if (descriptor == 1) stoneColor = Color.WHITE;
 	}
 
 }

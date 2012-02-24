@@ -23,7 +23,7 @@ public class GameField extends JComponent {
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
 	ArrayList<Cell> whiteStones = new ArrayList<Cell>();
 	ArrayList<Cell> freeCells = new ArrayList<Cell>();
-	ArrayList<Cell> possibleCells = new ArrayList<Cell>();
+	ArrayList<Cell> possibleCells = new ArrayList<Cell>();	
 	
 	int moveCounter = 0;
 
@@ -39,7 +39,7 @@ public class GameField extends JComponent {
 				allCells [i][j] = new Cell(i, j, cellSide);
 				freeCells.add(allCells [i][j]);
 //				allCells.put(i, j, new Cell(i, j, cellSide));
-			}
+			}			
 		}
 	}
 
@@ -65,10 +65,11 @@ public class GameField extends JComponent {
 		g2.fill(new Rectangle2D.Double(1, gamefieldY + 1, gameFieldSide - 1,
 				gameFieldSide - 1));
 		
-		makeCellBusy (cellCount/2 - 1, cellCount/2 - 1, 2);
-		makeCellBusy (cellCount/2, cellCount/2, 2);
-		makeCellBusy (cellCount/2, cellCount/2 - 1, 1);
-		makeCellBusy (cellCount/2 - 1, cellCount/2, 1);		
+		possibleCells.add(allCells[cellCount/2 - 1][cellCount/2 - 1]);
+		makeCellBusy (cellCount/2 - 1, cellCount/2 - 1, 1);
+		makeCellBusy (cellCount/2, cellCount/2, 1);
+		makeCellBusy (cellCount/2, cellCount/2 - 1, 0);
+		makeCellBusy (cellCount/2 - 1, cellCount/2, 0);		
 		
 		for (Cell[] cv: allCells) {
 			for (Cell cg: cv){
@@ -79,17 +80,63 @@ public class GameField extends JComponent {
 	}
 
 	private void makeCellBusy(int i, int j, int descriptor ) {		
-		allCells[i][j].makeBusy(descriptor);		
-		if (descriptor == 1) {
-			freeCells.remove(allCells[i][j]);
+		allCells[i][j].makeBusy(descriptor);
+		freeCells.remove(allCells[i][j]);
+		possibleCells.remove(allCells[i][j]);
+		if (descriptor == 0) {			
 			blackStones.add(allCells[i][j]);
 			checkAdjacentCells(i,j);
+		}
+		if (descriptor == 1){
+			whiteStones.add(allCells[i][j]);
+			
 		}
 	}
 
 	private void checkAdjacentCells(int i, int j) {
-		// TODO Auto-generated method stub
+		ArrayList<Cell> aroundCells = getAround(i,j);
+		for (Cell c: aroundCells){
+			if (c.free){
+				if(!possibleCells.contains(c)){
+				possibleCells.add(c);
+				}
+			}
+			if (c.descriptor != moveCounter%2){
+				int d = getDirection(c, i, j);
+				
+			}
+		}
+	}
+
+	private int getDirection(Cell c, int i, int j) {		
+		if (c.i_index < i){ //top side! 
+			if (c.j_index < j) return 1; //top left corner;
+			if (c.j_index == j) return 2; //up line;
+			return 3; //top right corner;
+		}
 		
+		if (c.i_index == i){ //left or right line!
+			if (c.j_index < j) return 4; //left line;
+			if (c.j_index > j) return 5; //right line;
+		}
+		
+		if (c.i_index > i){ //down side! This 'if' not necessary, I know... 
+			if (c.j_index < j) return 6; //down left corner;
+			if (c.j_index == j) return 7; //down line;
+			return 8;//down right corner;
+		}
+		return 0;
+	}
+
+	public ArrayList<Cell> getAround(int i, int j){
+		ArrayList<Cell> aroundCells = new ArrayList<Cell>();
+		for (int x = i-1; x < i+2; x++){
+			for (int y = j-1; y < j+2; y++){				
+					aroundCells.add(allCells [x][y]);
+				}
+			}
+		aroundCells.remove(allCells[i][j]);		
+		return aroundCells;		
 	}
 
 }
