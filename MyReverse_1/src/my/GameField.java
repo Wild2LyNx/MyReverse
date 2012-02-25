@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 
 
 
+
 public class GameField extends JComponent {
 
 	private static final long serialVersionUID = 1L;
@@ -24,6 +25,7 @@ public class GameField extends JComponent {
 	ArrayList<Cell> whiteStones = new ArrayList<Cell>();
 	ArrayList<Cell> freeCells = new ArrayList<Cell>();
 	ArrayList<Cell> possibleCells = new ArrayList<Cell>();	
+	ArrayList<Cell> changeVector = new ArrayList<Cell>();
 	
 	int moveCounter = 0;
 
@@ -54,22 +56,21 @@ public class GameField extends JComponent {
 	}
 
 	public void paintComponent(Graphics g) {
-		// System.out.println("width: " + frame.getWidth() + "\n height: " +
-		// frame.getHeight() + "\n side:" + gameFieldSide + "\n x: " +
-		// gameFieldX);
+
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.black);
 		g2.draw(new Rectangle2D.Double(0, gamefieldY, gameFieldSide,
 				gameFieldSide));
 		g2.setColor(Color.YELLOW);
 		g2.fill(new Rectangle2D.Double(1, gamefieldY + 1, gameFieldSide - 1,
-				gameFieldSide - 1));
+				gameFieldSide - 1));		
 		
 		possibleCells.add(allCells[cellCount/2 - 1][cellCount/2 - 1]);
-		makeCellBusy (cellCount/2 - 1, cellCount/2 - 1, 1);
-		makeCellBusy (cellCount/2, cellCount/2, 1);
-		makeCellBusy (cellCount/2, cellCount/2 - 1, 0);
-		makeCellBusy (cellCount/2 - 1, cellCount/2, 0);		
+		setStartStones (cellCount/2 - 1, cellCount/2 - 1, 1);
+		setStartStones (cellCount/2, cellCount/2, 1);
+		setStartStones (cellCount/2, cellCount/2 - 1, 0);
+		setStartStones (cellCount/2 - 1, cellCount/2, 0);	
+		setStartStones(2, 2, 0);
 		
 		for (Cell[] cv: allCells) {
 			for (Cell cg: cv){
@@ -79,21 +80,41 @@ public class GameField extends JComponent {
 		}
 	}
 
-	private void makeCellBusy(int i, int j, int descriptor ) {		
+	private void setStartStones(int i, int j, int descriptor) {
+		
 		allCells[i][j].makeBusy(descriptor);
 		freeCells.remove(allCells[i][j]);
 		possibleCells.remove(allCells[i][j]);
 		if (descriptor == 0) {			
 			blackStones.add(allCells[i][j]);
-			checkAdjacentCells(i,j);
+			setPossibleCells(i, j);
 		}
 		if (descriptor == 1){
 			whiteStones.add(allCells[i][j]);
-			
+			setPossibleCells(i, j);
+		}		
+	}
+
+	public void makeCellBusy(int i, int j) {	
+		
+		int descriptor = moveCounter%2;
+		
+		allCells[i][j].makeBusy(descriptor);
+		freeCells.remove(allCells[i][j]);
+		possibleCells.remove(allCells[i][j]);
+		if (descriptor == 0) {			
+			blackStones.add(allCells[i][j]);
+			setPossibleCells(i, j);
+			setkAdjacentCells(i, j);
+		}
+		if (descriptor == 1){
+			whiteStones.add(allCells[i][j]);
+			setPossibleCells(i, j);
+			setkAdjacentCells(i, j);
 		}
 	}
 
-	private void checkAdjacentCells(int i, int j) {
+	private void setPossibleCells(int i, int j) {
 		ArrayList<Cell> aroundCells = getAround(i,j);
 		for (Cell c: aroundCells){
 			if (c.free){
@@ -101,11 +122,79 @@ public class GameField extends JComponent {
 				possibleCells.add(c);
 				}
 			}
+		}
+	}
+
+	private void setkAdjacentCells(int i, int j) {
+		ArrayList<Cell> aroundCells = getAround(i,j);
+		for (Cell c: aroundCells){			
 			if (c.descriptor != moveCounter%2){
+//				changeVector.add(c);
 				int d = getDirection(c, i, j);
-				
+				changeVector = checkDirection(d, i, j);				
+				if (changeVector != null){
+					for (Cell cell: changeVector){
+						setStoneColor(cell);	
+//						System.out.println("Color: " + cell.stoneColor);
+					}
+				}
+				changeVector = null;
 			}
 		}
+	}
+	
+	private void setStoneColor(Cell cell) {
+		int descriptor = moveCounter%2;
+		int i = cell.i_index;
+		int j = cell.j_index;
+		
+		allCells[i][j].setStoneColor(descriptor);
+		System.out.println("Color changed");
+		if (descriptor == 0) {		
+			whiteStones.remove(allCells[i][j]);
+			blackStones.add(allCells[i][j]);			
+		}
+		if (descriptor == 1){
+			blackStones.remove(allCells[i][j]);
+			whiteStones.add(allCells[i][j]);			
+		}		
+	}
+
+	private boolean checkAdjacentCells(int i, int j) {
+		ArrayList<Cell> aroundCells = getAround(i,j);
+		for (Cell c: aroundCells){			
+			if (c.descriptor != moveCounter%2){
+//				changeVector.add(c);
+				int d = getDirection(c, i, j);
+				changeVector = checkDirection(d, i, j);				
+				if (changeVector != null) return true;
+			}
+		}
+		return false;
+	}
+
+	private ArrayList<Cell> checkDirection(int d, int i, int j) {
+		ArrayList<Cell> vector = new ArrayList<Cell>();
+		switch (d){
+		
+		case 1: {			
+			for (int x = i-1, y = j-1; x >= 0; x--, y--){
+				if (allCells[x][y].free) return null;
+				if (allCells[x][y].descriptor != moveCounter%2){
+					if (y == 0)return null;
+					if (x == 0)return null;
+					vector.add(allCells[x][y]);					
+				}
+				if (allCells[x][y].descriptor == moveCounter%2){
+					System.out.println("Ender cell:" + x + ", " + y);
+					return vector;
+				}
+			}
+		}		
+		// TODO Auto-generated method stub
+		
+		}
+		return null;		
 	}
 
 	private int getDirection(Cell c, int i, int j) {		
@@ -137,6 +226,21 @@ public class GameField extends JComponent {
 			}
 		aroundCells.remove(allCells[i][j]);		
 		return aroundCells;		
+	}
+
+	public Cell findCell(double x, double y) {
+		for (Cell[] cv: allCells) {
+			for (Cell cg: cv){
+				if (cg.contains(x, y, gamefieldY)) return cg;
+			}
+		}
+		return null;
+	}
+
+	public boolean canMove(Cell cell) {
+		if (!cell.free) return false;
+		if(!possibleCells.contains(cell)) return false;
+		return checkAdjacentCells(cell.i_index, cell.j_index);
 	}
 
 }

@@ -13,7 +13,16 @@ public class GameListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-//		field.findCell(e.getX(), e.getY());
+		double x = e.getX();
+		double y = e.getY();
+//		System.out.println("x: " + e.getX() + " y: " + e.getY());
+		Cell cell = field.findCell(x, y);
+		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+		if (field.canMove(cell)) {
+			field.makeCellBusy(cell.i_index, cell.j_index);
+		}
+		field.repaint();
+		field.moveCounter++;
 	}
 
 	@Override
