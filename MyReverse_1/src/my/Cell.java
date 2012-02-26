@@ -7,15 +7,16 @@ import java.awt.geom.Rectangle2D;
 
 public class Cell {
 	double relativeX, relativeY, side;
-	int i_index, j_index, descriptor;
+	int i_index, j_index;
+	int descriptor = 2;
 
 	boolean free = true;
 	Color stoneColor = Color.RED;
 
 	public Cell(int i, int j, double s) {
 		this.side = s;
-		this.relativeX = i * s;
-		this.relativeY = j * s;
+		this.relativeX = j * s;
+		this.relativeY = i * s;
 		this.i_index = i;
 		this.j_index = j;
 	}
@@ -29,7 +30,7 @@ public class Cell {
 			g.setColor(stoneColor);
 			g.fill(new Ellipse2D.Double(fieldX + relativeX + 4, fieldY
 					+ relativeY + 4, side - 7, side - 7));
-			System.out.println("Color: " + stoneColor);
+//			System.out.println("Color: " + stoneColor);
 		}
 	}
 
@@ -52,9 +53,10 @@ public class Cell {
 	}
 
 	public void setStoneColor(int descriptor) {
+		this.descriptor = descriptor;
 		if (descriptor == 0){
 			stoneColor = Color.BLACK;
-			System.out.println("Black color");
+//			System.out.println("Black color");
 		}
 		if (descriptor == 1)
 			stoneColor = Color.WHITE;

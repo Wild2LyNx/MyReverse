@@ -17,7 +17,7 @@ public class GameListener implements MouseListener {
 		double y = e.getY();
 //		System.out.println("x: " + e.getX() + " y: " + e.getY());
 		Cell cell = field.findCell(x, y);
-		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+//		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
 		if (field.canMove(cell)) {
 			field.makeCellBusy(cell.i_index, cell.j_index);
 		}
