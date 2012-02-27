@@ -25,7 +25,7 @@ public class DataPanel extends JPanel {
 	public DataPanel(JFrame frame) {
 		this.frame = frame;
 		createNameLabels();
-		createScoreLabel();
+//		createScoreLabel();
 		createChangeButtons();
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -52,10 +52,10 @@ public class DataPanel extends JPanel {
 		head.setLabelFor(names);		
 	}
 
-	private void createScoreLabel() {
+	/*private void createScoreLabel() {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 
 	private void createChangeButtons() {
 		

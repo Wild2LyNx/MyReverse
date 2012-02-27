@@ -49,7 +49,7 @@ public class GameField extends JComponent {
 		gameFieldSide = minDimension - 70;
 
 		gameFieldX = (frame.getWidth() - gameFieldSide) / 2;
-		gamefieldY = (frame.getHeight() - gameFieldSide) / 2 - 10;
+		gamefieldY = (frame.getHeight() - gameFieldSide) / 2 - 20;
 
 		cellSide = gameFieldSide / cellCount;
 	}
@@ -130,7 +130,6 @@ public class GameField extends JComponent {
 		ArrayList<Cell> aroundCells = getAround(i, j);
 		for (Cell c : aroundCells) {
 			if (c.descriptor != moveCounter % 2) {
-				// changeVector.add(c);
 				int d = getDirection(c, i, j);
 				changeVector = checkDirection(d, i, j);
 				if (changeVector != null) {
@@ -150,7 +149,7 @@ public class GameField extends JComponent {
 		int j = cell.j_index;
 
 		allCells[i][j].setStoneColor(descriptor);
-//		System.out.println("Color changed");
+		// System.out.println("Color changed");
 		if (descriptor == 0) {
 			whiteStones.remove(allCells[i][j]);
 			blackStones.add(allCells[i][j]);
@@ -164,14 +163,15 @@ public class GameField extends JComponent {
 	private boolean checkAdjacentCells(int i, int j) {
 		ArrayList<Cell> aroundCells = getAround(i, j);
 		for (Cell c : aroundCells) {
-			 /*System.out.println("Cell from around:" + c.i_index + ", " +
-			 c.j_index + " Descriptor: " + c.descriptor);*/
+			/*
+			 * System.out.println("Cell from around:" + c.i_index + ", " +
+			 * c.j_index + " Descriptor: " + c.descriptor);
+			 */
 			if (c.descriptor != moveCounter % 2) {
-				// changeVector.add(c);
 				int d = getDirection(c, i, j);
 				changeVector = checkDirection(d, i, j);
 				if (changeVector != null) {
-//					System.out.println("Can move");
+					// System.out.println("Can move");
 					return true;
 				}
 
@@ -217,7 +217,7 @@ public class GameField extends JComponent {
 				}
 			}
 		}
-		
+
 		case 3: {
 			for (int x = i - 1, y = j + 1; x >= 0; x--, y++) {
 				if (allCells[x][y].free)
@@ -234,14 +234,14 @@ public class GameField extends JComponent {
 				}
 			}
 		}
-		
+
 		case 4: {
 			for (int y = j - 1; y >= 0; y--) {
 				if (allCells[i][y].free)
 					return null;
 				if (allCells[i][y].descriptor != moveCounter % 2) {
 					if (y == 0)
-						return null;					
+						return null;
 					vector.add(allCells[i][y]);
 				}
 				if (allCells[i][y].descriptor == moveCounter % 2) {
@@ -249,8 +249,70 @@ public class GameField extends JComponent {
 				}
 			}
 		}
-		// TODO Auto-generated method stub
 
+		case 5: {
+			for (int y = j + 1; y <= 7; y++) {
+				if (allCells[i][y].free)
+					return null;
+				if (allCells[i][y].descriptor != moveCounter % 2) {
+					if (y == 7)
+						return null;
+					vector.add(allCells[i][y]);
+				}
+				if (allCells[i][y].descriptor == moveCounter % 2) {
+					return vector;
+				}
+			}
+		}
+
+		case 6: {
+			for (int x = i + 1, y = j - 1; x <= 7; x++, y--) {
+				if (allCells[x][y].free)
+					return null;
+				if (allCells[x][y].descriptor != moveCounter % 2) {
+					if (y == 0)
+						return null;
+					if (x == 7)
+						return null;
+					vector.add(allCells[x][y]);
+				}
+				if (allCells[x][y].descriptor == moveCounter % 2) {
+					return vector;
+				}
+			}
+		}
+
+		case 7: {
+			for (int x = i + 1; x <= 7; x++) {
+				if (allCells[x][j].free)
+					return null;
+				if (allCells[x][j].descriptor != moveCounter % 2) {
+					if (x == 7)
+						return null;
+					vector.add(allCells[x][j]);
+				}
+				if (allCells[x][j].descriptor == moveCounter % 2) {
+					return vector;
+				}
+			}
+		}
+
+		case 8: {
+			for (int x = i + 1, y = j + 1; x <= 7; x++, y++) {
+				if (allCells[x][y].free)
+					return null;
+				if (allCells[x][y].descriptor != moveCounter % 2) {
+					if (y == 7)
+						return null;
+					if (x == 7)
+						return null;
+					vector.add(allCells[x][y]);
+				}
+				if (allCells[x][y].descriptor == moveCounter % 2) {
+					return vector;
+				}
+			}
+		}
 		}
 		return null;
 	}
@@ -309,6 +371,14 @@ public class GameField extends JComponent {
 		if (!possibleCells.contains(cell))
 			return false;
 		return checkAdjacentCells(cell.i_index, cell.j_index);
+	}
+	
+	public boolean moveIsPossible() {
+		for (Cell c : possibleCells) {
+			if (canMove(c))
+				return true;
+		}
+		return false;
 	}
 
 }
