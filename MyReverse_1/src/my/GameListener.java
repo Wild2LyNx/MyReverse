@@ -18,18 +18,20 @@ public class GameListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		field.autosave();
 		double x = e.getX();
 		double y = e.getY();
+		double checkbound = Math.pow(field.cellCount, 2)/2;
 		// System.out.println("x: " + e.getX() + " y: " + e.getY());
 		Cell cell = field.findCell(x, y);
 		// System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
 		if (field.canMove(cell)) {
-			field.makeCellBusy(cell.i_index, cell.j_index);
+			field.makeCellBusy(cell.i_index, cell.j_index);			
 			field.moveCounter++;
 		}
 		field.repaint();
 		setPlayer(field.moveCounter);
-		if (field.freeCells.size() < 32) {
+		if (field.freeCells.size() < checkbound) {
 			if (!field.moveIsPossible()) {
 				generateGameOver();
 			}

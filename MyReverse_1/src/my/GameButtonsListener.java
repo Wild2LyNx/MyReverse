@@ -24,10 +24,20 @@ public class GameButtonsListener implements ActionListener {
 				int n = JOptionPane
 						.showConfirmDialog(
 								field,
-								"The game isn't finished. Are You sure you want to finish the game?",
-								"Are You sure?", JOptionPane.YES_NO_OPTION);
-				if (n == 0) System.out.println("Yes");
+								"The game is not finished. Are You sure that You want to finish the game?",
+								"Warning", JOptionPane.YES_NO_OPTION);
+				if (n == 0) {
+					field.newGame();
+					field.repaint();
+				}
 			}
+		}
+		
+		if (button.getText().compareTo("Undo") == 0){
+			if ((field.moveCounter == 0)|(field.undoPossibleCells.isEmpty())){
+				JOptionPane.showMessageDialog(field, "Sorry, it's impossible!", "What a pity :(", JOptionPane.INFORMATION_MESSAGE);
+			}
+			field.undo();
 		}
 	}
 }

@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Stack;
+import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -14,10 +16,10 @@ public class GameField extends JComponent {
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
 	int cellCount = 8;
+	int undoLimit = 5;
+	int moveCounter = 0;
 	double gameFieldSide, gameFieldX, gamefieldY, cellSide;
 
-	// ParameterizedArray<Cell> blackStones, whiteStones, freeCells,
-	// possibleCells;
 	Cell allCells[][] = new Cell[cellCount][cellCount];
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
 	ArrayList<Cell> whiteStones = new ArrayList<Cell>();
@@ -25,7 +27,11 @@ public class GameField extends JComponent {
 	ArrayList<Cell> possibleCells = new ArrayList<Cell>();
 	ArrayList<Cell> changeVector = new ArrayList<Cell>();
 
-	int moveCounter = 0;
+	Stack<ArrayList<Cell>> undoPossibleCells = new Stack<ArrayList<Cell>>();
+	Vector<ArrayList<Cell>> redoPossibleCells = new Vector<ArrayList<Cell>>(
+			undoLimit);
+	Stack<Cell[][]> undoAllCells = new Stack<Cell[][]>();
+	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>(undoLimit);
 
 	public GameField(JFrame f) {
 		this.frame = f;
@@ -34,12 +40,10 @@ public class GameField extends JComponent {
 	}
 
 	private void initCells() {
-		for (int i = 0; i < cellCount; i++) {
-			// System.out.println("\n");
+		for (int i = 0; i < cellCount; i++) {			
 			for (int j = 0; j < cellCount; j++) {
 				allCells[i][j] = new Cell(i, j, cellSide);
 				freeCells.add(allCells[i][j]);
-				// System.out.print(i + ", " + j + "; ");
 			}
 		}
 	}
@@ -64,12 +68,12 @@ public class GameField extends JComponent {
 		g2.fill(new Rectangle2D.Double(1, gamefieldY + 1, gameFieldSide - 1,
 				gameFieldSide - 1));
 
-		possibleCells.add(allCells[cellCount / 2 - 1][cellCount / 2 - 1]);
+		if (moveCounter == 0)
+			possibleCells.add(allCells[cellCount / 2 - 1][cellCount / 2 - 1]);
 		setStartStones(cellCount / 2 - 1, cellCount / 2 - 1, 1);
 		setStartStones(cellCount / 2, cellCount / 2, 1);
 		setStartStones(cellCount / 2, cellCount / 2 - 1, 0);
-		setStartStones(cellCount / 2 - 1, cellCount / 2, 0);
-		// setStartStones(2, 2, 0);
+		setStartStones(cellCount / 2 - 1, cellCount / 2, 0);	
 
 		for (Cell[] cv : allCells) {
 			for (Cell cg : cv) {
@@ -162,11 +166,7 @@ public class GameField extends JComponent {
 
 	private boolean checkAdjacentCells(int i, int j) {
 		ArrayList<Cell> aroundCells = getAround(i, j);
-		for (Cell c : aroundCells) {
-			/*
-			 * System.out.println("Cell from around:" + c.i_index + ", " +
-			 * c.j_index + " Descriptor: " + c.descriptor);
-			 */
+		for (Cell c : aroundCells) {			
 			if (c.descriptor != moveCounter % 2) {
 				int d = getDirection(c, i, j);
 				changeVector = checkDirection(d, i, j);
@@ -223,7 +223,7 @@ public class GameField extends JComponent {
 				if (allCells[x][y].free)
 					return null;
 				if (allCells[x][y].descriptor != moveCounter % 2) {
-					if (y == 7)
+					if (y == cellCount - 1)
 						return null;
 					if (x == 0)
 						return null;
@@ -251,11 +251,11 @@ public class GameField extends JComponent {
 		}
 
 		case 5: {
-			for (int y = j + 1; y <= 7; y++) {
+			for (int y = j + 1; y < cellCount; y++) {
 				if (allCells[i][y].free)
 					return null;
 				if (allCells[i][y].descriptor != moveCounter % 2) {
-					if (y == 7)
+					if (y == cellCount - 1)
 						return null;
 					vector.add(allCells[i][y]);
 				}
@@ -266,13 +266,13 @@ public class GameField extends JComponent {
 		}
 
 		case 6: {
-			for (int x = i + 1, y = j - 1; x <= 7; x++, y--) {
+			for (int x = i + 1, y = j - 1; x < cellCount; x++, y--) {
 				if (allCells[x][y].free)
 					return null;
 				if (allCells[x][y].descriptor != moveCounter % 2) {
 					if (y == 0)
 						return null;
-					if (x == 7)
+					if (x == cellCount - 1)
 						return null;
 					vector.add(allCells[x][y]);
 				}
@@ -283,11 +283,11 @@ public class GameField extends JComponent {
 		}
 
 		case 7: {
-			for (int x = i + 1; x <= 7; x++) {
+			for (int x = i + 1; x < cellCount; x++) {
 				if (allCells[x][j].free)
 					return null;
 				if (allCells[x][j].descriptor != moveCounter % 2) {
-					if (x == 7)
+					if (x == cellCount - 1)
 						return null;
 					vector.add(allCells[x][j]);
 				}
@@ -298,13 +298,13 @@ public class GameField extends JComponent {
 		}
 
 		case 8: {
-			for (int x = i + 1, y = j + 1; x <= 7; x++, y++) {
+			for (int x = i + 1, y = j + 1; x < cellCount; x++, y++) {
 				if (allCells[x][y].free)
 					return null;
 				if (allCells[x][y].descriptor != moveCounter % 2) {
-					if (y == 7)
+					if (y == cellCount - 1)
 						return null;
-					if (x == 7)
+					if (x == cellCount - 1)
 						return null;
 					vector.add(allCells[x][y]);
 				}
@@ -347,7 +347,7 @@ public class GameField extends JComponent {
 		ArrayList<Cell> aroundCells = new ArrayList<Cell>();
 		for (int x = i - 1; x < i + 2; x++) {
 			for (int y = j - 1; y < j + 2; y++) {
-				if ((0 <= x) && (x < 8) && (0 <= y) && (y < 8))
+				if ((0 <= x) && (x < cellCount) && (0 <= y) && (y < cellCount))
 					aroundCells.add(allCells[x][y]);
 			}
 		}
@@ -372,13 +372,53 @@ public class GameField extends JComponent {
 			return false;
 		return checkAdjacentCells(cell.i_index, cell.j_index);
 	}
-	
+
 	public boolean moveIsPossible() {
 		for (Cell c : possibleCells) {
 			if (canMove(c))
 				return true;
 		}
 		return false;
+	}
+
+	public void newGame() {
+		moveCounter = 0;
+		blackStones.clear();
+		whiteStones.clear();
+		freeCells.clear();
+		possibleCells.clear();
+		initCells();
+	}
+
+	public void undo() {
+		allCells = null;
+		possibleCells.clear();
+		allCells = undoAllCells.pop();
+		possibleCells = undoPossibleCells.pop();
+		setStoneLists();
+		System.out.println("Number of black stones:" + blackStones.size());
+		moveCounter--;
+		
+		System.out.println("Undo");
+		repaint();
+	}
+
+	private void setStoneLists() {
+		blackStones.clear();
+		whiteStones.clear();
+		freeCells.clear();
+		for (Cell[] cv : allCells) {
+			for (Cell cg : cv) {
+				if (cg.free) freeCells.add(cg);
+				if (cg.descriptor == 0) blackStones.add(cg);
+				if (cg.descriptor == 1) whiteStones.add(cg);
+			}
+		}		
+	}
+
+	public void autosave() {
+		undoAllCells.push(allCells);
+		undoPossibleCells.push(possibleCells);
 	}
 
 }
