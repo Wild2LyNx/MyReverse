@@ -27,10 +27,10 @@ public class GameField extends JComponent {
 	ArrayList<Cell> possibleCells = new ArrayList<Cell>();
 	ArrayList<Cell> changeVector = new ArrayList<Cell>();
 
-	Stack<ArrayList<Cell>> undoPossibleCells = new Stack<ArrayList<Cell>>();
+	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>(undoLimit);
 	Vector<ArrayList<Cell>> redoPossibleCells = new Vector<ArrayList<Cell>>(
 			undoLimit);
-	Stack<Cell[][]> undoAllCells = new Stack<Cell[][]>();
+	Stack<ArrayList<Cell>> undoPossibleCells = new Stack<ArrayList<Cell>>();
 	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>(undoLimit);
 
 	public GameField(JFrame f) {
@@ -40,7 +40,7 @@ public class GameField extends JComponent {
 	}
 
 	private void initCells() {
-		for (int i = 0; i < cellCount; i++) {			
+		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
 				allCells[i][j] = new Cell(i, j, cellSide);
 				freeCells.add(allCells[i][j]);
@@ -73,7 +73,7 @@ public class GameField extends JComponent {
 		setStartStones(cellCount / 2 - 1, cellCount / 2 - 1, 1);
 		setStartStones(cellCount / 2, cellCount / 2, 1);
 		setStartStones(cellCount / 2, cellCount / 2 - 1, 0);
-		setStartStones(cellCount / 2 - 1, cellCount / 2, 0);	
+		setStartStones(cellCount / 2 - 1, cellCount / 2, 0);
 
 		for (Cell[] cv : allCells) {
 			for (Cell cg : cv) {
@@ -166,7 +166,7 @@ public class GameField extends JComponent {
 
 	private boolean checkAdjacentCells(int i, int j) {
 		ArrayList<Cell> aroundCells = getAround(i, j);
-		for (Cell c : aroundCells) {			
+		for (Cell c : aroundCells) {
 			if (c.descriptor != moveCounter % 2) {
 				int d = getDirection(c, i, j);
 				changeVector = checkDirection(d, i, j);
@@ -391,14 +391,25 @@ public class GameField extends JComponent {
 	}
 
 	public void undo() {
-		allCells = null;
+		moveCounter--;
 		possibleCells.clear();
-		allCells = undoAllCells.pop();
-		possibleCells = undoPossibleCells.pop();
+		Cell lastAllCells[][] = undoAllCells.get(moveCounter-1);
+
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++) {		
+				
+				allCells[i][j] = lastAllCells[i][j];
+//				System.out.println(lastAllCells[i][j].stoneColor + " complain " + allCells[i][j].stoneColor);
+			}
+		}
+
+		ArrayList<Cell> lastPossibleCells = undoPossibleCells.pop();
+		for (int i = 0; i < lastPossibleCells.size(); i++)
+			possibleCells.add(lastPossibleCells.get(i));
 		setStoneLists();
 		System.out.println("Number of black stones:" + blackStones.size());
-		moveCounter--;
 		
+
 		System.out.println("Undo");
 		repaint();
 	}
@@ -409,16 +420,35 @@ public class GameField extends JComponent {
 		freeCells.clear();
 		for (Cell[] cv : allCells) {
 			for (Cell cg : cv) {
-				if (cg.free) freeCells.add(cg);
-				if (cg.descriptor == 0) blackStones.add(cg);
-				if (cg.descriptor == 1) whiteStones.add(cg);
+				if (cg.free)
+					freeCells.add(allCells[cg.i_index][cg.j_index]);
+				if (cg.descriptor == 0)
+					blackStones.add(allCells[cg.i_index][cg.j_index]);
+				if (cg.descriptor == 1)
+					whiteStones.add(allCells[cg.i_index][cg.j_index]);
 			}
-		}		
+		}
 	}
 
 	public void autosave() {
-		undoAllCells.push(allCells);
-		undoPossibleCells.push(possibleCells);
+		System.out.println("autosave");
+		Cell lastAllCells[][] = new Cell[cellCount][cellCount];
+		int blackCount = 0;
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++) {
+				lastAllCells[i][j] = allCells[i][j];
+				if (lastAllCells[i][j].descriptor == 0) blackCount++;
+				
+			}
+		}
+		System.out.println(blackCount + " compare " + blackStones.size());
+
+		undoAllCells.add(moveCounter-1, lastAllCells);
+
+		ArrayList<Cell> lastPossibleCells = new ArrayList<Cell>();
+		for (int i = 0; i < possibleCells.size(); i++)
+			lastPossibleCells.add(possibleCells.get(i));
+		undoPossibleCells.add(moveCounter-1, lastPossibleCells);
 	}
 
 }

@@ -17,15 +17,15 @@ public class GameListener implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		field.autosave();
+	public void mouseClicked(MouseEvent e) {		
 		double x = e.getX();
 		double y = e.getY();
 		double checkbound = Math.pow(field.cellCount, 2)/2;
 		// System.out.println("x: " + e.getX() + " y: " + e.getY());
 		Cell cell = field.findCell(x, y);
-		// System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+		 System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
 		if (field.canMove(cell)) {
+			if (field.moveCounter != 0) field.autosave();
 			field.makeCellBusy(cell.i_index, cell.j_index);			
 			field.moveCounter++;
 		}
