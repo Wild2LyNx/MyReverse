@@ -37,7 +37,7 @@ public class GameButtonsListener implements ActionListener {
 			if ((field.moveCounter == 0)|(field.undoPossibleCells.isEmpty())){
 				JOptionPane.showMessageDialog(field, "Sorry, it's impossible!", "What a pity :(", JOptionPane.INFORMATION_MESSAGE);
 			}
-			field.undo();
+			if (!field.undoPossibleCells.isEmpty()) field.undo();
 		}
 	}
 }

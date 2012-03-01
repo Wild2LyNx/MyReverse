@@ -1,12 +1,12 @@
 package my;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-public class GameListener implements MouseListener {
+public class GameListener extends MouseAdapter {
 
 	GameField field;
 	JLabel playerMove;
@@ -55,7 +55,7 @@ public class GameListener implements MouseListener {
 				"Game over", JOptionPane.INFORMATION_MESSAGE, null);
 	}	
 
-	private void setPlayer(int moveCounter) {
+	public void setPlayer(int moveCounter) {
 		String player = new String();
 		int d = moveCounter % 2;
 		if (d == 0) {
@@ -89,6 +89,11 @@ public class GameListener implements MouseListener {
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void mouseMoved (MouseEvent e1) {
+		
 	}
 
 }

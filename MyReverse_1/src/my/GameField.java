@@ -3,6 +3,7 @@ package my;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -411,6 +412,8 @@ public class GameField extends JComponent {
 		
 
 		System.out.println("Undo");
+//		MouseListener[] mls = (GameListener[])(getListeners);
+//		((GameListener) mls[0]).setPlayer(moveCounter);
 		repaint();
 	}
 
@@ -436,7 +439,7 @@ public class GameField extends JComponent {
 		int blackCount = 0;
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
-				lastAllCells[i][j] = allCells[i][j];
+				lastAllCells[i][j] = allCells[i][j].clone();
 				if (lastAllCells[i][j].descriptor == 0) blackCount++;
 				
 			}
@@ -447,7 +450,7 @@ public class GameField extends JComponent {
 
 		ArrayList<Cell> lastPossibleCells = new ArrayList<Cell>();
 		for (int i = 0; i < possibleCells.size(); i++)
-			lastPossibleCells.add(possibleCells.get(i));
+			lastPossibleCells.add(possibleCells.get(i).clone());
 		undoPossibleCells.add(moveCounter-1, lastPossibleCells);
 	}
 

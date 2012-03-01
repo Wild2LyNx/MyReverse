@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-public class Cell {
+public class Cell implements Cloneable {
 	double relativeX, relativeY, side;
 	int i_index, j_index;
 	int descriptor = 2;
@@ -60,6 +60,17 @@ public class Cell {
 		}
 		if (descriptor == 1)
 			stoneColor = Color.WHITE;
+	}
+	
+	public Cell clone() {
+		try {
+			return (Cell) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 }
