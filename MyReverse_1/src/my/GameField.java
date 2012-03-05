@@ -3,22 +3,23 @@ package my;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseListener;
+
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JTextArea;
 
 public class GameField extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
-	int cellCount = 8;
-	int undoLimit = 5;
+	JTextArea moveAndGameInfo;
+	int cellCount = 8;	
 	int moveCounter = 0;
+	int redoCounter = 0;
 	double gameFieldSide, gameFieldX, gamefieldY, cellSide;
 
 	Cell allCells[][] = new Cell[cellCount][cellCount];
@@ -28,14 +29,13 @@ public class GameField extends JComponent {
 	ArrayList<Cell> possibleCells = new ArrayList<Cell>();
 	ArrayList<Cell> changeVector = new ArrayList<Cell>();
 
-	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>(undoLimit);
-	Vector<ArrayList<Cell>> redoPossibleCells = new Vector<ArrayList<Cell>>(
-			undoLimit);
-	Stack<ArrayList<Cell>> undoPossibleCells = new Stack<ArrayList<Cell>>();
-	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>(undoLimit);
+	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();
+	Vector<ArrayList<Cell>> redoPossibleCells = new Vector<ArrayList<Cell>>();	
+	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();
 
-	public GameField(JFrame f) {
+	public GameField(JFrame f, JTextArea tArea) {
 		this.frame = f;
+		this.moveAndGameInfo = tArea;
 		initDimensions();
 		initCells();
 	}
@@ -82,6 +82,29 @@ public class GameField extends JComponent {
 				cg.paint(0, gamefieldY, g2);
 			}
 		}
+		setPlayerString();
+	}
+
+	private void setPlayerString() {		
+		moveAndGameInfo.setText("");
+		String player = new String();
+		int d = moveCounter % 2;
+		if (d == 0) {
+			player = "Current move: black";
+		}
+		if (d == 1) {
+			player = "Current move: white";
+		}				
+		moveAndGameInfo.append(player + "\n");
+		String scores = setScores();
+		moveAndGameInfo.append(scores);						
+	}
+
+	private String setScores() {
+		int blackScores = blackStones.size();
+		int whiteScores = whiteStones.size();
+		String scores = new String("Scores: " + blackScores + ":" + whiteScores);
+		return scores;
 	}
 
 	private void setStartStones(int i, int j, int descriptor) {
@@ -392,29 +415,38 @@ public class GameField extends JComponent {
 	}
 
 	public void undo() {
+		saveForRedo();
+		redoCounter++;
 		moveCounter--;
 		possibleCells.clear();
 		Cell lastAllCells[][] = undoAllCells.get(moveCounter-1);
 
 		for (int i = 0; i < cellCount; i++) {
-			for (int j = 0; j < cellCount; j++) {		
-				
+			for (int j = 0; j < cellCount; j++) {				
 				allCells[i][j] = lastAllCells[i][j];
-//				System.out.println(lastAllCells[i][j].stoneColor + " complain " + allCells[i][j].stoneColor);
 			}
 		}
-
-		ArrayList<Cell> lastPossibleCells = undoPossibleCells.pop();
-		for (int i = 0; i < lastPossibleCells.size(); i++)
-			possibleCells.add(lastPossibleCells.get(i));
-		setStoneLists();
-		System.out.println("Number of black stones:" + blackStones.size());
 		
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++) {				
+				setPossibleCells(i, j);
+			}
+		}
+		
+		setStoneLists();
 
 		System.out.println("Undo");
-//		MouseListener[] mls = (GameListener[])(getListeners);
-//		((GameListener) mls[0]).setPlayer(moveCounter);
 		repaint();
+	}
+
+	private void saveForRedo() {
+		Cell lastAllCells[][] = new Cell[cellCount][cellCount];
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++) {
+				lastAllCells[i][j] = allCells[i][j].clone();				
+			}
+		}		
+		redoAllCells.add(redoCounter, lastAllCells);		
 	}
 
 	private void setStoneLists() {
@@ -434,24 +466,42 @@ public class GameField extends JComponent {
 	}
 
 	public void autosave() {
-		System.out.println("autosave");
 		Cell lastAllCells[][] = new Cell[cellCount][cellCount];
-		int blackCount = 0;
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
-				lastAllCells[i][j] = allCells[i][j].clone();
-				if (lastAllCells[i][j].descriptor == 0) blackCount++;
-				
+				lastAllCells[i][j] = allCells[i][j].clone();				
+			}
+		}		
+		undoAllCells.add(moveCounter-1, lastAllCells);
+	}
+
+	public void redo() {
+		redoCounter--;
+		moveCounter++;
+		possibleCells.clear();
+		Cell lastAllCells[][] = redoAllCells.get(redoCounter);
+
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++) {				
+				allCells[i][j] = lastAllCells[i][j];
 			}
 		}
-		System.out.println(blackCount + " compare " + blackStones.size());
+		
+		for (int i = 0; i < cellCount; i++) {
+			for (int j = 0; j < cellCount; j++) {				
+				setPossibleCells(i, j);
+			}
+		}
+		
+		setStoneLists();
 
-		undoAllCells.add(moveCounter-1, lastAllCells);
+		System.out.println("Redo");
+		repaint();		
+	}
 
-		ArrayList<Cell> lastPossibleCells = new ArrayList<Cell>();
-		for (int i = 0; i < possibleCells.size(); i++)
-			lastPossibleCells.add(possibleCells.get(i).clone());
-		undoPossibleCells.add(moveCounter-1, lastPossibleCells);
+	public void resetRedo() {
+		redoCounter = 0;
+		redoAllCells.clear();
 	}
 
 }

@@ -30,10 +30,10 @@ public class DataPanel extends JPanel {
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(30, 0, 400, 10));
-		
+				
 		head.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		names.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-		setButtons.setAlignmentX(JComponent.CENTER_ALIGNMENT);		
+		setButtons.setAlignmentX(JComponent.CENTER_ALIGNMENT);	
 	}
 
 	private void createNameLabels() {

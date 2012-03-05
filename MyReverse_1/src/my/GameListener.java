@@ -3,17 +3,16 @@ package my;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JLabel;
+
 import javax.swing.JOptionPane;
+
 
 public class GameListener extends MouseAdapter {
 
-	GameField field;
-	JLabel playerMove;
+	GameField field;	
 
-	public GameListener(GameField f, JLabel p) {
+	public GameListener(GameField f) {
 		this.field = f;
-		this.playerMove = p;
 	}
 
 	@Override
@@ -21,16 +20,18 @@ public class GameListener extends MouseAdapter {
 		double x = e.getX();
 		double y = e.getY();
 		double checkbound = Math.pow(field.cellCount, 2)/2;
-		// System.out.println("x: " + e.getX() + " y: " + e.getY());
 		Cell cell = field.findCell(x, y);
-		 System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+		
+		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+		
 		if (field.canMove(cell)) {
 			if (field.moveCounter != 0) field.autosave();
 			field.makeCellBusy(cell.i_index, cell.j_index);			
 			field.moveCounter++;
+			field.resetRedo();
 		}
 		field.repaint();
-		setPlayer(field.moveCounter);
+//		setPlayer(field.moveCounter);
 		if (field.freeCells.size() < checkbound) {
 			if (!field.moveIsPossible()) {
 				generateGameOver();
@@ -55,17 +56,17 @@ public class GameListener extends MouseAdapter {
 				"Game over", JOptionPane.INFORMATION_MESSAGE, null);
 	}	
 
-	public void setPlayer(int moveCounter) {
-		String player = new String();
-		int d = moveCounter % 2;
-		if (d == 0) {
-			player = "Current move: black";
-		}
-		if (d == 1) {
-			player = "Current move: white";
-		}
-		playerMove.setText(player);
-	}
+//	public void setPlayer(int moveCounter) {
+//		String player = new String();
+//		int d = moveCounter % 2;
+//		if (d == 0) {
+//			player = "Current move: black";
+//		}
+//		if (d == 1) {
+//			player = "Current move: white";
+//		}		
+//		playerMove.setText(player);
+//	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {

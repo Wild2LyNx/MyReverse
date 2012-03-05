@@ -34,10 +34,17 @@ public class GameButtonsListener implements ActionListener {
 		}
 		
 		if (button.getText().compareTo("Undo") == 0){
-			if ((field.moveCounter == 0)|(field.undoPossibleCells.isEmpty())){
+			if ((field.moveCounter == 0)|(field.undoAllCells.isEmpty())){
 				JOptionPane.showMessageDialog(field, "Sorry, it's impossible!", "What a pity :(", JOptionPane.INFORMATION_MESSAGE);
 			}
-			if (!field.undoPossibleCells.isEmpty()) field.undo();
+			if (!field.undoAllCells.isEmpty()) field.undo();
+		}
+		
+		if (button.getText().compareTo("Redo") == 0){
+			if ((field.redoCounter == 0)|(field.redoAllCells.isEmpty())){
+				JOptionPane.showMessageDialog(field, "Sorry, it's impossible!", "What a pity :(", JOptionPane.INFORMATION_MESSAGE);
+			}
+			if (!(field.redoCounter == 0)) field.redo();
 		}
 	}
 }

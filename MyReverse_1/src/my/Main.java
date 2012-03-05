@@ -2,8 +2,8 @@ package my;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Font;
 import java.util.ArrayList;
-
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -11,8 +11,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 
@@ -33,18 +34,17 @@ public class Main {
 		JFrame frame = new JFrame ("MyRverse");
 		JPanel buttonPanel = new JPanel();
 		DataPanel dataPanel = new DataPanel(frame);
-		JLabel playerMove = new JLabel("Current move: black");
-		
-		dataPanel.add(playerMove);
-		playerMove.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-//		dataPanel.setUpLayout();
+		JTextArea moveAndGameInfo = new JTextArea();
+		moveAndGameInfo.setBackground(null);	
+		moveAndGameInfo.setFont(new Font(Font.DIALOG, Font.BOLD, 12));		
+		dataPanel.add(moveAndGameInfo);		
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setSize(900, 500);
 		frame.setBounds(150, 100, 900, 500);
 		
-		GameField field = new GameField(frame);
-		field.addMouseListener(new GameListener(field, playerMove));		
+		GameField field = new GameField(frame, moveAndGameInfo);
+		selectPlayConfig();
+		field.addMouseListener(new GameListener(field));
 		
 		initButtons(buttonPanel, field);		
 		
@@ -53,13 +53,16 @@ public class Main {
 		
 		container.add(dataPanel, BorderLayout.WEST);
 		container.add(buttonPanel, BorderLayout.EAST);
-//		container.add(playerMove, BorderLayout.AFTER_LAST_LINE);
 		
 		container.add(field, BorderLayout.CENTER);
 
 		frame.setVisible(true);
 		
 	}	
+
+	private static void selectPlayConfig() {
+		
+	}
 
 	private static void initButtons(JPanel buttonPanel, GameField field) {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -77,9 +80,7 @@ public class Main {
 			buttonPanel.add(gameButtons.get(i));
 			buttonPanel.add(Box.createVerticalStrut(5));
 			gameButtons.get(i).setAlignmentX(JComponent.CENTER_ALIGNMENT);			
-		}		
-		/*for (int i = 0; i < buttonPanel.getComponentCount(); i++)
-			((JButton) buttonPanel.getComponent(i)).addActionListener(buttonsListener);*/
+		}				
 	}
 
 }
