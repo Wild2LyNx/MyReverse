@@ -13,6 +13,7 @@ public class GameListener extends MouseAdapter {
 
 	public GameListener(GameField f) {
 		this.field = f;
+		System.out.println("Choise");
 	}
 
 	@Override

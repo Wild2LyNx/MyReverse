@@ -2,17 +2,23 @@ package my;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
@@ -43,8 +49,9 @@ public class Main {
 		frame.setBounds(150, 100, 900, 500);
 		
 		GameField field = new GameField(frame, moveAndGameInfo);
-		selectPlayConfig();
-		field.addMouseListener(new GameListener(field));
+		
+		PlayersManager plManager = new PlayersManager(frame, field);
+		plManager.setPlayConfig();
 		
 		initButtons(buttonPanel, field);		
 		
@@ -59,11 +66,7 @@ public class Main {
 		frame.setVisible(true);
 		
 	}	
-
-	private static void selectPlayConfig() {
-		
-	}
-
+	
 	private static void initButtons(JPanel buttonPanel, GameField field) {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 400, 10));
