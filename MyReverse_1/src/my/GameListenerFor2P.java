@@ -7,13 +7,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
 
-public class GameListener extends MouseAdapter {
+public class GameListenerFor2P extends MouseAdapter {
 
 	GameField field;	
 
-	public GameListener(GameField f) {
+	public GameListenerFor2P(GameField f) {
 		this.field = f;
-		System.out.println("Choise");
 	}
 
 	@Override
@@ -25,6 +24,10 @@ public class GameListener extends MouseAdapter {
 		
 		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
 		
+		tryMakeMove(checkbound, cell);
+	}
+
+	public void tryMakeMove(double checkbound, Cell cell) {
 		if (field.canMove(cell)) {
 			if (field.moveCounter != 0) field.autosave();
 			field.makeCellBusy(cell.i_index, cell.j_index);			
@@ -56,18 +59,6 @@ public class GameListener extends MouseAdapter {
 		JOptionPane.showMessageDialog(field, message,
 				"Game over", JOptionPane.INFORMATION_MESSAGE, null);
 	}	
-
-//	public void setPlayer(int moveCounter) {
-//		String player = new String();
-//		int d = moveCounter % 2;
-//		if (d == 0) {
-//			player = "Current move: black";
-//		}
-//		if (d == 1) {
-//			player = "Current move: white";
-//		}		
-//		playerMove.setText(player);
-//	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {

@@ -26,20 +26,21 @@ public class GameField extends JComponent {
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
 	ArrayList<Cell> whiteStones = new ArrayList<Cell>();
 	ArrayList<Cell> freeCells = new ArrayList<Cell>();
-	ArrayList<Cell> possibleCells = new ArrayList<Cell>();
-	ArrayList<Cell> changeVector = new ArrayList<Cell>();
+	ArrayList<Cell> possibleCells = new ArrayList<Cell>();//Cells where at least one player can move exactly now 
+	ArrayList<Cell> changeVector = new ArrayList<Cell>();//Vector of cells with stones in one direction, which will change color after move
 
-	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();
-	Vector<ArrayList<Cell>> redoPossibleCells = new Vector<ArrayList<Cell>>();	
-	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();
+	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();//Vector of main arrays "allCells". From here we take main array to make undo action.
+//	Vector<ArrayList<Cell>> redoPossibleCells = new Vector<ArrayList<Cell>>();	
+	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();//Vector of main arrays "allCells". From here we take main array to make redo action.
 
 	public GameField(JFrame f, JTextArea tArea) {
 		this.frame = f;
-		this.moveAndGameInfo = tArea;
+		this.moveAndGameInfo = tArea;//field with information which player should to move and scores of both.
 		initDimensions();
 		initCells();
 	}
 
+	//Initialize empty desk (game field) with 4 first stones. 
 	private void initCells() {
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
@@ -48,7 +49,8 @@ public class GameField extends JComponent {
 			}
 		}
 	}
-
+	
+	//this method draws desk against frame dimensions. Theoretically it should provide re-drawing of the desk when frame resized. But not now :(  
 	private void initDimensions() {
 		double minDimension = Math.min(frame.getHeight(), frame.getWidth());
 		gameFieldSide = minDimension - 70;
@@ -502,6 +504,24 @@ public class GameField extends JComponent {
 	public void resetRedo() {
 		redoCounter = 0;
 		redoAllCells.clear();
+	}
+
+	public int getScoresForThisMove(Cell cell) {
+		int i = cell.i_index;
+		int j = cell.j_index;
+		int scores = 0;
+		ArrayList<Cell> aroundCells = getAround(i, j);
+		for (Cell c : aroundCells) {
+			if (c.descriptor != moveCounter % 2) {
+				int d = getDirection(c, i, j);
+				changeVector = checkDirection(d, i, j);
+				if (changeVector != null) {
+					scores += changeVector.size();
+				}
+				changeVector = null;
+			}
+		}
+		return scores;
 	}
 
 }
