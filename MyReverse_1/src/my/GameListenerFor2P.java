@@ -10,24 +10,25 @@ import javax.swing.JOptionPane;
 public class GameListenerFor2P extends MouseAdapter {
 
 	GameField field;	
+	double checkbound;
 
 	public GameListenerFor2P(GameField f) {
 		this.field = f;
+		checkbound = Math.pow(field.cellCount, 2)/2;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {		
 		double x = e.getX();
 		double y = e.getY();
-		double checkbound = Math.pow(field.cellCount, 2)/2;
 		Cell cell = field.findCell(x, y);
 		
 		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
 		
-		tryMakeMove(checkbound, cell);
+		tryMakeMove(cell);
 	}
 
-	public void tryMakeMove(double checkbound, Cell cell) {
+	public void tryMakeMove(Cell cell) {
 		if (field.canMove(cell)) {
 			if (field.moveCounter != 0) field.autosave();
 			field.makeCellBusy(cell.i_index, cell.j_index);			
@@ -43,7 +44,7 @@ public class GameListenerFor2P extends MouseAdapter {
 		}
 	}
 
-	private void generateGameOver() {
+	public void generateGameOver() {
 		String message = new String();
 		int blackScores = field.blackStones.size();
 		int whiteScores = field.whiteStones.size();

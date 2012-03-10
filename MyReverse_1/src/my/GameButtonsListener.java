@@ -2,18 +2,24 @@ package my;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GameButtonsListener implements ActionListener {
+	JFrame frame;
 	GameField field;
 	JPanel buttonPanel;
+	PlayersManager plManager;
 
-	public GameButtonsListener(GameField f, JPanel p) {
+	public GameButtonsListener(JFrame fr, GameField f, JPanel p) {
+		this.frame = fr;
 		this.field = f;
 		this.buttonPanel = p;
+		plManager = new PlayersManager(fr, f);		
 	}
 
 	@Override
@@ -27,9 +33,10 @@ public class GameButtonsListener implements ActionListener {
 								"The game is not finished. Are You sure that You want to finish the game?",
 								"Warning", JOptionPane.YES_NO_OPTION);
 				if (n == 0) {
-					field.newGame();
-					field.repaint();
+					makeNewGame();
 				}
+			} else{
+				makeNewGame();
 			}
 		}
 		
@@ -46,5 +53,19 @@ public class GameButtonsListener implements ActionListener {
 			}
 			if (!(field.redoCounter == 0)) field.redo();
 		}
+	}
+
+	private void makeNewGame() {
+		field.newGame();
+		field.repaint();
+		
+		MouseListener[] mls = (MouseListener[])(field.getListeners(MouseListener.class));
+		try {
+			 field.removeMouseListener(mls[0]);
+		}
+		catch (ArrayIndexOutOfBoundsException ex) {
+		}
+		
+		plManager.setPlayConfig();
 	}
 }

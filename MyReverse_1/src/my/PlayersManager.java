@@ -59,7 +59,6 @@ public class PlayersManager {
 				}
 				if (command == "Player vs Computer") {
 					int compDescriptor = generateChoiceDialog();
-					System.out.println("Descriptor:" + compDescriptor);
 					field.addMouseListener(new GameListenerForComp(field,
 							compDescriptor));
 				}

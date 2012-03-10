@@ -46,7 +46,7 @@ public class Main {
 		PlayersManager plManager = new PlayersManager(frame, field);
 		plManager.setPlayConfig();
 		
-		initButtons(buttonPanel, field);		
+		initButtons(buttonPanel, field, frame);		
 		
 		Container container = frame.getContentPane();
 		container.setLayout(new BorderLayout());
@@ -60,7 +60,7 @@ public class Main {
 		
 	}	
 	
-	private static void initButtons(JPanel buttonPanel, GameField field) {
+	private static void initButtons(JPanel buttonPanel, GameField field, JFrame frame) {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 400, 10));
 		
@@ -69,7 +69,7 @@ public class Main {
 		gameButtons.add(new JButton("Undo"));
 		gameButtons.add(new JButton("Redo"));
 		
-		GameButtonsListener buttonsListener = new GameButtonsListener(field, buttonPanel);
+		GameButtonsListener buttonsListener = new GameButtonsListener(frame, field, buttonPanel);
 		
 		for (int i = 0; i < gameButtons.size(); i++){
 			gameButtons.get(i).addActionListener(buttonsListener);

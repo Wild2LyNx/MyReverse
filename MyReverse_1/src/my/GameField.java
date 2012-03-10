@@ -37,7 +37,7 @@ public class GameField extends JComponent {
 		this.frame = f;
 		this.moveAndGameInfo = tArea;//field with information which player should to move and scores of both.
 		initDimensions();
-		initCells();
+		initCells();		
 	}
 
 	//Initialize empty desk (game field) with 4 first stones. 
