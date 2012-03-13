@@ -75,8 +75,16 @@ public class DataPanel extends JPanel {
 
 	}
 
-	public void setUpLayout() {
-
+	public void setNameForComp(int descriptor) {
+		if (descriptor == 0) {
+			player1.setText("Computer (Black) VS");
+			setButtons.remove(0);
+		}
+		
+		if (descriptor == 1) {
+			player2.setText("Computer (White)");
+			setButtons.remove(1);
+		}
 	}
 
 }

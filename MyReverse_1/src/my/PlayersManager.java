@@ -19,11 +19,13 @@ import javax.swing.JRadioButton;
 public class PlayersManager {
 	JFrame frame;
 	GameField field;
+	DataPanel dataPanel;
 	int descriptor = 3;
 
-	public PlayersManager(JFrame fr, GameField fd) {
+	public PlayersManager(JFrame fr, GameField fd, DataPanel dp) {
 		frame = fr;
 		field = fd;
+		this.dataPanel = dp;
 	}
 
 	public void setPlayConfig() {
@@ -59,6 +61,7 @@ public class PlayersManager {
 				}
 				if (command == "Player vs Computer") {
 					int compDescriptor = generateChoiceDialog();
+					dataPanel.setNameForComp(compDescriptor);
 					field.addMouseListener(new GameListenerForComp(field,
 							compDescriptor));
 				}

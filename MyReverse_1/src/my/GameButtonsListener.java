@@ -15,11 +15,11 @@ public class GameButtonsListener implements ActionListener {
 	JPanel buttonPanel;
 	PlayersManager plManager;
 
-	public GameButtonsListener(JFrame fr, GameField f, JPanel p) {
+	public GameButtonsListener(JFrame fr, GameField f, JPanel p, PlayersManager plMng) {
 		this.frame = fr;
 		this.field = f;
 		this.buttonPanel = p;
-		plManager = new PlayersManager(fr, f);		
+		this.plManager = plMng;
 	}
 
 	@Override
