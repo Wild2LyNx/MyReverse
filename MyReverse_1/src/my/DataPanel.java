@@ -78,13 +78,21 @@ public class DataPanel extends JPanel {
 	public void setNameForComp(int descriptor) {
 		if (descriptor == 0) {
 			player1.setText("Computer (Black) VS");
+			player2.setText(player2Name);
 			setButtons.remove(0);
 		}
 		
 		if (descriptor == 1) {
+			player1.setText(player1Name);
 			player2.setText("Computer (White)");
 			setButtons.remove(1);
 		}
+	}
+
+	public void reInit() {
+		remove(setButtons);
+		createChangeButtons();
+		
 	}
 
 }

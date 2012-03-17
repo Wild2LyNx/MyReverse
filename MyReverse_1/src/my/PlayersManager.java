@@ -61,6 +61,7 @@ public class PlayersManager {
 				}
 				if (command == "Player vs Computer") {
 					int compDescriptor = generateChoiceDialog();
+					dataPanel.reInit();
 					dataPanel.setNameForComp(compDescriptor);
 					field.addMouseListener(new GameListenerForComp(field,
 							compDescriptor));

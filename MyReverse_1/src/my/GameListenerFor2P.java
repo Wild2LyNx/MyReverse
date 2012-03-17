@@ -1,8 +1,11 @@
 package my;
 
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import javax.swing.Timer;
 
 import javax.swing.JOptionPane;
 
@@ -23,7 +26,7 @@ public class GameListenerFor2P extends MouseAdapter {
 		double y = e.getY();
 		Cell cell = field.findCell(x, y);
 		
-		System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+		if (cell != null) System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
 		
 		tryMakeMove(cell);
 	}
@@ -35,16 +38,20 @@ public class GameListenerFor2P extends MouseAdapter {
 			field.moveCounter++;
 			field.resetRedo();
 		}
-		field.repaint();
+		
+				
 //		setPlayer(field.moveCounter);
 		if (field.freeCells.size() < checkbound) {
 			if (!field.moveIsPossible()) {
 				generateGameOver();
 			}
-		}
+		}		
+		
+		field.repaint();
 	}
 
 	public void generateGameOver() {
+		field.gameOver = true;
 		String message = new String();
 		int blackScores = field.blackStones.size();
 		int whiteScores = field.whiteStones.size();

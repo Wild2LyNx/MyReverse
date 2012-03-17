@@ -30,7 +30,7 @@ public class Main {
 	}
 	
 	private static void createAndShowGUI() {
-		JFrame frame = new JFrame ("MyRverse");
+		JFrame frame = new JFrame ("My Precious");
 		JPanel buttonPanel = new JPanel();
 		DataPanel dataPanel = new DataPanel(frame);
 		JTextArea moveAndGameInfo = new JTextArea();

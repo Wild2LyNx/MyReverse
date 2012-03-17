@@ -21,6 +21,7 @@ public class GameField extends JComponent {
 	int moveCounter = 0;
 	int redoCounter = 0;
 	double gameFieldSide, gameFieldX, gamefieldY, cellSide;
+	boolean gameOver = false;
 
 	Cell allCells[][] = new Cell[cellCount][cellCount];
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
@@ -67,7 +68,7 @@ public class GameField extends JComponent {
 		g2.setColor(Color.black);
 		g2.draw(new Rectangle2D.Double(0, gamefieldY, gameFieldSide,
 				gameFieldSide));
-		g2.setColor(Color.YELLOW);
+		g2.setColor(new Color(221, 121, 21));
 		g2.fill(new Rectangle2D.Double(1, gamefieldY + 1, gameFieldSide - 1,
 				gameFieldSide - 1));
 
@@ -408,6 +409,7 @@ public class GameField extends JComponent {
 	}
 
 	public void newGame() {
+		gameOver = false;
 		moveCounter = 0;
 		blackStones.clear();
 		whiteStones.clear();

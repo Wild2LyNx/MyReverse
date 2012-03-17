@@ -12,6 +12,7 @@ public class Cell implements Cloneable {
 
 	boolean free = true;
 	Color stoneColor = Color.RED;
+	Color whiteColor = new Color(220, 220, 220);
 
 	public Cell(int i, int j, double s) {
 		this.side = s;
@@ -30,7 +31,6 @@ public class Cell implements Cloneable {
 			g.setColor(stoneColor);
 			g.fill(new Ellipse2D.Double(fieldX + relativeX + 4, fieldY
 					+ relativeY + 4, side - 7, side - 7));
-//			System.out.println("Color: " + stoneColor);
 		}
 	}
 
@@ -40,7 +40,7 @@ public class Cell implements Cloneable {
 		if (descriptor == 0)
 			stoneColor = Color.BLACK;
 		if (descriptor == 1)
-			stoneColor = Color.WHITE;
+			stoneColor = whiteColor;
 	}
 
 	public boolean contains(double x, double y, double gamefieldY) {
@@ -59,7 +59,7 @@ public class Cell implements Cloneable {
 //			System.out.println("Black color");
 		}
 		if (descriptor == 1)
-			stoneColor = Color.WHITE;
+			stoneColor = whiteColor;
 	}
 	
 	public Cell clone() {

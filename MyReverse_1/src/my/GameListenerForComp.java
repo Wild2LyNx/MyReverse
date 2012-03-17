@@ -1,41 +1,54 @@
 package my;
 
+
 import java.awt.event.MouseEvent;
-public class GameListenerForComp extends GameListenerFor2P{
+
+
+public class GameListenerForComp extends GameListenerFor2P {
 	GameField field;
 	ComputerPlayer computer = new ComputerPlayer();
-	int compDescriptor;
+	Cell c;
+	int compDescriptor, descriptor;
 	boolean compsMove;
-	
-	GameListenerForComp (GameField f, int d){
+
+	GameListenerForComp(GameField f, int d) {
 		super(f);
 		this.field = f;
-		this.compDescriptor = d;	
+		this.compDescriptor = d;
 		setPlayerTurn();
-		if (compsMove) computer.makeMove(field);
+		if (compsMove)
+			computer.makeMove(field);
 	}
 
-	private void setPlayerTurn() {		
-		if (field.moveCounter%2 == compDescriptor) compsMove = true;
-		if (field.moveCounter%2 != compDescriptor) compsMove = false;
+	private void setPlayerTurn() {
+		descriptor = field.moveCounter % 2;
+		if (descriptor == compDescriptor)
+			compsMove = true;
+		if (descriptor != compDescriptor)
+			compsMove = false;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!compsMove) {
 			super.mouseClicked(e);
-			if (!field.possibleCells.isEmpty())setPlayerTurn();
-			else super.generateGameOver();
+			if (!field.possibleCells.isEmpty())
+				setPlayerTurn();
+			else
+				super.generateGameOver();
 		}
 		if (compsMove) {
-			
-			Cell c = computer.makeMove(field);
-			System.out.println("Comp's move: " + c.i_index + ", " + c.j_index);
-			if (c != null) super.tryMakeMove(computer.makeMove(field));		
+			c = computer.makeMove(field);
+
+			if (c != null) {
+				System.out.println("Comp's move: " + c.i_index + ", "
+						+ c.j_index);
+				super.tryMakeMove(computer.makeMove(field));
+			}
 			setPlayerTurn();
+
 		}
-			
-			
+
 	}
 
 	@Override
@@ -54,7 +67,7 @@ public class GameListenerForComp extends GameListenerFor2P{
 	public void mouseEntered(MouseEvent e) {
 		setPlayerTurn();
 		if (compsMove) {
-			super.tryMakeMove(computer.makeMove(field));		
+			super.tryMakeMove(computer.makeMove(field));
 			setPlayerTurn();
 		}
 	}

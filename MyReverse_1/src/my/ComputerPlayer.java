@@ -9,6 +9,7 @@ public class ComputerPlayer {
 	int key = 0;
 	
 	public Cell makeMove(GameField field) {
+		
 		buildProbableCellsList(field);
 		Cell moveCell = probablyCells.get(key);		
 		return moveCell;
