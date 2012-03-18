@@ -35,7 +35,8 @@ public class Main {
 		DataPanel dataPanel = new DataPanel(frame);
 		JTextArea moveAndGameInfo = new JTextArea();
 		moveAndGameInfo.setBackground(null);	
-		moveAndGameInfo.setFont(new Font(Font.DIALOG, Font.BOLD, 12));		
+		moveAndGameInfo.setFont(new Font(Font.DIALOG, Font.BOLD, 12));	
+		moveAndGameInfo.setEditable(false);
 		dataPanel.add(moveAndGameInfo);		
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -15,12 +15,17 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 public class PlayersManager {
 	JFrame frame;
 	GameField field;
 	DataPanel dataPanel;
-	int descriptor = 3;
+	int compDescriptor = 3;
+	String networkHostName;
+	JTextField hostName;
+	boolean server = false;
+	boolean client = false;
 
 	public PlayersManager(JFrame fr, GameField fd, DataPanel dp) {
 		frame = fr;
@@ -29,7 +34,8 @@ public class PlayersManager {
 	}
 
 	public void setPlayConfig() {
-		final JDialog choiseDialog = new JDialog(frame, "Alternative choise", true);
+		final JDialog choiseDialog = new JDialog(frame, "Alternative choice",
+				true);
 		ArrayList<JRadioButton> variantButtons = new ArrayList<JRadioButton>();
 		final ButtonGroup group = new ButtonGroup();
 		JPanel selectButtonsPanel = new JPanel();
@@ -38,6 +44,7 @@ public class PlayersManager {
 
 		variantButtons.add(new JRadioButton("Two players"));
 		variantButtons.add(new JRadioButton("Player vs Computer"));
+		variantButtons.add(new JRadioButton("Network game"));
 
 		for (int i = 0; i < variantButtons.size(); i++) {
 			JRadioButton curButton = variantButtons.get(i);
@@ -66,13 +73,85 @@ public class PlayersManager {
 					field.addMouseListener(new GameListenerForComp(field,
 							compDescriptor));
 				}
+				if (command == "Network game") {
+					String hostName = networkParamsDialog();
+					System.out.println(hostName);
+				}
 				choiseDialog.setVisible(false);
 				choiseDialog.dispose();
 			}
 
+			private String networkParamsDialog() {
+				final JDialog networkParamsDialog = new JDialog(frame,
+						"Choose your status", true);
+				ArrayList<JRadioButton> variantButtons = new ArrayList<JRadioButton>();
+				final ButtonGroup group = new ButtonGroup();
+				JPanel selectButtonsPanel = new JPanel();
+				selectButtonsPanel.setLayout(new BoxLayout(selectButtonsPanel,
+						BoxLayout.Y_AXIS));
+				final String serverCommand = new String(
+						"Initiator (Your comp will be server)");
+				final String clientCommand = new String(
+						"Invitee (Your comp will be client on the server, mentioned above)");
+
+				variantButtons.add(new JRadioButton(serverCommand));
+				variantButtons.add(new JRadioButton(clientCommand));
+
+				for (int i = 0; i < variantButtons.size(); i++) {
+					JRadioButton curButton = variantButtons.get(i);
+					curButton.setActionCommand(curButton.getText());
+					group.add(curButton);
+					selectButtonsPanel.add(curButton);
+					selectButtonsPanel.add(Box.createVerticalStrut(5));
+					curButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+				}
+
+				variantButtons.get(0).setSelected(true);
+				
+				hostName = new JTextField();
+
+				JButton selectButton = new JButton("Set host name");
+				selectButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						networkHostName = hostName.getText();
+						if (networkHostName == null) return;
+						
+						String command = group.getSelection()
+								.getActionCommand();
+						if (command == serverCommand) {
+							server = true;
+							client = false;
+						}
+
+						if (command == clientCommand) {
+							server = true;
+							client = false;
+						}
+						
+						networkParamsDialog.setVisible(false);
+						networkParamsDialog.dispose();
+					}
+				});
+				JPanel hostNameChooserContentPane = new JPanel(
+						new BorderLayout());
+				hostNameChooserContentPane.add(selectButtonsPanel,
+						BorderLayout.NORTH);
+				hostNameChooserContentPane.add(hostName, BorderLayout.CENTER);
+				hostNameChooserContentPane.add(selectButton,
+						BorderLayout.PAGE_END);
+				hostNameChooserContentPane.setOpaque(true);
+				networkParamsDialog.setContentPane(hostNameChooserContentPane);
+
+				networkParamsDialog.setSize(new Dimension(500, 150));
+				networkParamsDialog.setLocationRelativeTo(frame);
+				networkParamsDialog.setVisible(true);
+				return networkHostName;
+			}
+
 			private int generateChoiceDialog() {
 				final JDialog setColorDialog = new JDialog(frame,
-						"Choose comp color", true);
+						"Choose your color", true);
 				ArrayList<JRadioButton> variantButtons = new ArrayList<JRadioButton>();
 				final ButtonGroup group = new ButtonGroup();
 				JPanel selectButtonsPanel = new JPanel();
@@ -93,30 +172,32 @@ public class PlayersManager {
 
 				variantButtons.get(0).setSelected(true);
 
-				JButton selectButton = new JButton("Set computer's color");
+				JButton selectButton = new JButton("Set my playing color");
 				selectButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						String command = group.getSelection()
 								.getActionCommand();
 						if (command == "Black")
-							descriptor = 0;
+							compDescriptor = 1;
 						if (command == "White")
-							descriptor = 1;
+							compDescriptor = 0;
 						setColorDialog.setVisible(false);
 						setColorDialog.dispose();
 					}
 				});
 				JPanel colorChooserContentPane = new JPanel(new BorderLayout());
-				colorChooserContentPane.add(selectButtonsPanel, BorderLayout.CENTER);
-				colorChooserContentPane.add(selectButton, BorderLayout.PAGE_END);
+				colorChooserContentPane.add(selectButtonsPanel,
+						BorderLayout.CENTER);
+				colorChooserContentPane
+						.add(selectButton, BorderLayout.PAGE_END);
 				colorChooserContentPane.setOpaque(true);
 				setColorDialog.setContentPane(colorChooserContentPane);
 
 				setColorDialog.setSize(new Dimension(300, 150));
 				setColorDialog.setLocationRelativeTo(frame);
 				setColorDialog.setVisible(true);
-				return descriptor;
+				return compDescriptor;
 			}
 		});
 

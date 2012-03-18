@@ -52,11 +52,6 @@ public class DataPanel extends JPanel {
 		head.setLabelFor(names);		
 	}
 
-	/*private void createScoreLabel() {
-		// TODO Auto-generated method stub
-
-	}*/
-
 	private void createChangeButtons() {
 		
 		setButtons = new JPanel();

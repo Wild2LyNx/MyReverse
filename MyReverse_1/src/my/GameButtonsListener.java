@@ -41,7 +41,7 @@ public class GameButtonsListener implements ActionListener {
 		}
 		
 		if (button.getText().compareTo("Undo") == 0){
-			if ((field.moveCounter == 0)|(field.undoAllCells.isEmpty())|(field.gameOver)){
+			if ((field.moveCounter == 1)|(field.undoAllCells.isEmpty())|(field.gameOver)){
 				JOptionPane.showMessageDialog(field, "Sorry, it's impossible!", "What a pity :(", JOptionPane.INFORMATION_MESSAGE);
 			}
 			else if (!field.undoAllCells.isEmpty()) field.undo();

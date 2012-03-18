@@ -526,4 +526,16 @@ public class GameField extends JComponent {
 		return scores;
 	}
 
+	public boolean moveIsPossibleForNext() {
+		moveCounter++;
+		for (Cell c : possibleCells) {
+			if (canMove(c)){
+				moveCounter--;
+				return true;
+			}				
+		}
+		moveCounter--;
+		return false;
+	}
+
 }
