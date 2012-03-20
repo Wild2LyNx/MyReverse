@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -75,7 +76,8 @@ public class PlayersManager {
 				}
 				if (command == "Network game") {
 					String hostName = networkParamsDialog();
-					System.out.println(hostName);
+					NetworkComponentsFactory creator = new NetworkComponentsFactory();
+					field.addMouseListener(creator.create(hostName, server, client));
 				}
 				choiseDialog.setVisible(false);
 				choiseDialog.dispose();
@@ -107,7 +109,7 @@ public class PlayersManager {
 				}
 
 				variantButtons.get(0).setSelected(true);
-				
+
 				hostName = new JTextField();
 
 				JButton selectButton = new JButton("Set host name");
@@ -115,8 +117,7 @@ public class PlayersManager {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						networkHostName = hostName.getText();
-						if (networkHostName == null) return;
-						
+
 						String command = group.getSelection()
 								.getActionCommand();
 						if (command == serverCommand) {
@@ -125,12 +126,22 @@ public class PlayersManager {
 						}
 
 						if (command == clientCommand) {
-							server = true;
-							client = false;
+							server = false;
+							client = true;
 						}
-						
-						networkParamsDialog.setVisible(false);
-						networkParamsDialog.dispose();
+
+						if ((networkHostName != null)
+								&& (!networkHostName.isEmpty())) {
+							networkParamsDialog.setVisible(false);
+							networkParamsDialog.dispose();
+						}
+
+						if (networkHostName.isEmpty())
+							JOptionPane.showMessageDialog(field,
+									"You didn't input the name of server!",
+									"Error", JOptionPane.INFORMATION_MESSAGE,
+									null);
+
 					}
 				});
 				JPanel hostNameChooserContentPane = new JPanel(

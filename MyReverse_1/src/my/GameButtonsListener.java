@@ -14,6 +14,7 @@ public class GameButtonsListener implements ActionListener {
 	GameField field;
 	JPanel buttonPanel;
 	PlayersManager plManager;
+	boolean fieldIsStopped = false;
 
 	public GameButtonsListener(JFrame fr, GameField f, JPanel p, PlayersManager plMng) {
 		this.frame = fr;
@@ -53,6 +54,27 @@ public class GameButtonsListener implements ActionListener {
 			}
 			else if (!(field.redoCounter == 0)) field.redo();
 		}
+		
+		/*if (button.getText().compareTo("Stop it!") == 0){
+			MouseListener[] mls = (MouseListener[])(field.getListeners(MouseListener.class));
+		
+			if (!fieldIsStopped){
+				try {
+					mls[0].notify();
+					mls[0].wait();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				fieldIsStopped = true;
+				System.out.println("Stopped");
+			}
+			
+			else if (fieldIsStopped){
+				mls[0].notify();
+				fieldIsStopped = false;
+			}
+		}*/
 	}
 
 	private void makeNewGame() {

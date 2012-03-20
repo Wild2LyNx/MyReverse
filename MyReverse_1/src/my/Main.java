@@ -69,6 +69,7 @@ public class Main {
 		gameButtons.add(new JButton("New game"));
 		gameButtons.add(new JButton("Undo"));
 		gameButtons.add(new JButton("Redo"));
+//		gameButtons.add(new JButton("Stop it!"));
 		
 		GameButtonsListener buttonsListener = new GameButtonsListener(frame, field, buttonPanel, plManager);
 		
