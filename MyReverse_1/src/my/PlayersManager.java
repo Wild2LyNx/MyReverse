@@ -75,9 +75,8 @@ public class PlayersManager {
 							compDescriptor));
 				}
 				if (command == "Network game") {
-					String hostName = networkParamsDialog();
-					NetworkComponentsFactory creator = new NetworkComponentsFactory();
-					field.addMouseListener(creator.create(hostName, server, client));
+					String hostName = networkParamsDialog();					
+					field.addMouseListener(new MyProtocolHandler(field, hostName, server, client));
 				}
 				choiseDialog.setVisible(false);
 				choiseDialog.dispose();
@@ -87,7 +86,7 @@ public class PlayersManager {
 				final JDialog networkParamsDialog = new JDialog(frame,
 						"Choose your status", true);
 				ArrayList<JRadioButton> variantButtons = new ArrayList<JRadioButton>();
-				final ButtonGroup group = new ButtonGroup();
+				final ButtonGroup bgroup = new ButtonGroup();
 				JPanel selectButtonsPanel = new JPanel();
 				selectButtonsPanel.setLayout(new BoxLayout(selectButtonsPanel,
 						BoxLayout.Y_AXIS));
@@ -102,7 +101,7 @@ public class PlayersManager {
 				for (int i = 0; i < variantButtons.size(); i++) {
 					JRadioButton curButton = variantButtons.get(i);
 					curButton.setActionCommand(curButton.getText());
-					group.add(curButton);
+					bgroup.add(curButton);
 					selectButtonsPanel.add(curButton);
 					selectButtonsPanel.add(Box.createVerticalStrut(5));
 					curButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
@@ -118,7 +117,7 @@ public class PlayersManager {
 					public void actionPerformed(ActionEvent e) {
 						networkHostName = hostName.getText();
 
-						String command = group.getSelection()
+						String command = bgroup.getSelection()
 								.getActionCommand();
 						if (command == serverCommand) {
 							server = true;
@@ -131,12 +130,12 @@ public class PlayersManager {
 						}
 
 						if ((networkHostName != null)
-								&& (!networkHostName.isEmpty())) {
+								&& (!networkHostName.isEmpty())|(server)) {
 							networkParamsDialog.setVisible(false);
 							networkParamsDialog.dispose();
 						}
 
-						if (networkHostName.isEmpty())
+						if (networkHostName.isEmpty()&&(client))
 							JOptionPane.showMessageDialog(field,
 									"You didn't input the name of server!",
 									"Error", JOptionPane.INFORMATION_MESSAGE,
