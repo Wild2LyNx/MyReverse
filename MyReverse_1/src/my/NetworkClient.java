@@ -12,7 +12,7 @@ public class NetworkClient {
 	PrintWriter out = null;
 	BufferedReader in = null;
 	String hostName;
-	MoveParser parser;
+	Parser parser;
 
 	public NetworkClient(String hostName) throws IOException {
 		this.hostName = hostName;
@@ -45,7 +45,7 @@ public class NetworkClient {
 			if (fromServer.equals("Bye."))
 				break;
 				
-			parser.parse(fromServer);
+			parser.parseMove(fromServer);
 
 			fromUser = stdIn.readLine(); //here I should somehow connect game listener
 			if (fromUser != null) {

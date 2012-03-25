@@ -1,10 +1,11 @@
 package my;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
 
-public class GameListenerForComp extends GameListenerFor2P {
+public class GameListenerForComp extends MouseAdapter {
 	GameField field;
 	ComputerPlayer computer = new ComputerPlayer();
 	Cell c;
@@ -12,7 +13,6 @@ public class GameListenerForComp extends GameListenerFor2P {
 	boolean compsMove;
 
 	GameListenerForComp(GameField f, int d) {
-		super(f);
 		this.field = f;
 		this.compDescriptor = d;
 		setPlayerTurn();
@@ -31,14 +31,19 @@ public class GameListenerForComp extends GameListenerFor2P {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!compsMove) {
-			super.mouseClicked(e);
-//			if (field.possibleCells.isEmpty()) super.generateGameOver();
-//			else if (!field.moveIsPossible()) super.generatePass();		
+			double x = e.getX();
+			double y = e.getY();
+			Cell cell = field.findCellByXY(x, y);
+
+			if (cell != null)
+				System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+
+			field.tryMakeMove(cell);
 			setPlayerTurn();
 		}
 		if (compsMove) {
 			if (!field.moveIsPossible()) {		
-				if (!field.moveIsPossibleForNext())generateGameOver();
+				if (!field.moveIsPossibleForNext())field.generateGameOver();
 				else generatePassForComp();
 				setPlayerTurn();
 				return;
@@ -48,11 +53,9 @@ public class GameListenerForComp extends GameListenerFor2P {
 			if (c != null) {
 				System.out.println("Comp's move: " + c.i_index + ", "
 						+ c.j_index);
-				super.tryMakeMove(c);
+				field.tryMakeMove(c);
 				c = null;
 			}
-//			if (field.possibleCells.isEmpty()) super.generateGameOver();
-//			else if (!field.moveIsPossible()) super.generatePass();		
 			setPlayerTurn();
 		}
 
@@ -73,9 +76,9 @@ public class GameListenerForComp extends GameListenerFor2P {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		setPlayerTurn();
-		if (field.possibleCells.isEmpty()) super.generateGameOver();
+		if (field.possibleCells.isEmpty()) field.generateGameOver();
 		else if (!field.moveIsPossible()) {
-			if (!compsMove) super.generatePass();
+			if (!compsMove) field.generatePass();
 			else {
 				generatePassForComp();
 				setPlayerTurn();
@@ -84,9 +87,7 @@ public class GameListenerForComp extends GameListenerFor2P {
 		if (compsMove) {
 			c = computer.makeMove(field);
 			if (c != null)
-				super.tryMakeMove(c);
-//			if (field.possibleCells.isEmpty()) super.generateGameOver();
-//			else if (!field.moveIsPossible()) super.generatePass();		
+				field.tryMakeMove(c);
 			setPlayerTurn();
 			c = null;
 		}

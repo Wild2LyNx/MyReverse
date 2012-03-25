@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 public class GameField extends JComponent {
@@ -22,6 +23,7 @@ public class GameField extends JComponent {
 	int redoCounter = 0;
 	double gameFieldSide, gameFieldX, gamefieldY, cellSide;
 	boolean gameOver = false;
+	boolean passMove = false;
 
 	Cell allCells[][] = new Cell[cellCount][cellCount];
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
@@ -382,7 +384,7 @@ public class GameField extends JComponent {
 		return aroundCells;
 	}
 
-	public Cell findCell(double x, double y) {
+	public Cell findCellByXY(double x, double y) {
 		for (Cell[] cv : allCells) {
 			for (Cell cg : cv) {
 				if (cg.contains(x, y, gamefieldY))
@@ -536,6 +538,58 @@ public class GameField extends JComponent {
 		}
 		moveCounter--;
 		return false;
+	}
+
+	public Cell findCellByIJ(int i, int j) {
+		if ((i < 0)|(i > cellCount)|(j < 0)|(j > cellCount)) return null;
+		return (allCells[i][j]);
+	}
+
+	public void tryMakeMove(Cell cell) {
+		passMove = false;
+		if (canMove(cell)) {
+			if (moveCounter != 0)
+				autosave();
+			makeCellBusy(cell.i_index, cell.j_index);
+			moveCounter++;
+			resetRedo();
+		}		
+		if (possibleCells.isEmpty()|blackStones.isEmpty()|whiteStones.isEmpty()) generateGameOver();
+		else if (!moveIsPossible()){
+			if (!moveIsPossibleForNext())generateGameOver();
+			else generatePass();	
+		}
+		repaint();		
+	}
+
+	public void generatePass() {
+		passMove = true;
+		String message = new String(
+				"Unfortunaetly, You have no possible moves, so You have to pass Your move :(");
+		JOptionPane.showMessageDialog(this, message, "I'm sorry",
+				JOptionPane.INFORMATION_MESSAGE, null);
+		if (moveCounter != 0)
+			autosave();
+		moveCounter++;
+		resetRedo();		
+	}
+
+	public void generateGameOver() {
+		gameOver = true;
+		String message = new String();
+		int blackScores = blackStones.size();
+		int whiteScores = whiteStones.size();
+		if (blackScores > whiteScores)
+			message = "Black won by the score of " + blackScores + " to "
+					+ whiteScores;
+		if (blackScores < whiteScores)
+			message = "White won by the score of " + whiteScores + " to "
+					+ blackScores;
+		if (blackScores == whiteScores)
+			message = "The game is a draw";
+
+		JOptionPane.showMessageDialog(this, message, "Game over",
+				JOptionPane.INFORMATION_MESSAGE, null);		
 	}
 
 }

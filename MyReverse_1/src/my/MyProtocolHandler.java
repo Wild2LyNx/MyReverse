@@ -9,16 +9,33 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class MyProtocolHandler implements MouseListener{
+public class MyProtocolHandler implements MouseListener {
+	private static final int WAITING = 0;
+	private static final int SENTAUTHREQUEST = 1;
+	private static final int WAITFORCOLOR = 2;
+	private static final int SENDMOVE = 3;
+	private static final int GAMEOVER = 4;
+
+	private int state = WAITING;
+
 	String hostName;
 	boolean server, client;
 	GameField field;
-	
+
 	Socket socket = null;
 	PrintWriter out = null;
 	BufferedReader in = null;
-	
-	public MyProtocolHandler (GameField f, String n, boolean s, boolean c){
+
+	Parser parser = new Parser();
+	Serializer serializer = new Serializer();
+
+	int playerDescriptor = 3; // index, which is displaying the color of stones
+								// of player who playing on this computer.
+								// ("...in the house that Jack built", yeah). In
+								// my designation 0 means "black" and 1 means
+								// "white".
+
+	public MyProtocolHandler(GameField f, String n, boolean s, boolean c) {
 		this.field = f;
 		this.hostName = n;
 		this.server = s;
@@ -27,19 +44,20 @@ public class MyProtocolHandler implements MouseListener{
 			try {
 				createClient();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		if (s) createServer();
+		if (s)
+			createServer();
 	}
 
 	private void createServer() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	private void createClient() throws IOException{
+	private void createClient() throws IOException {
+		state = SENTAUTHREQUEST;
 		try {
 			socket = new Socket(hostName, 4444);
 			out = new PrintWriter(socket.getOutputStream(), true);
@@ -54,65 +72,90 @@ public class MyProtocolHandler implements MouseListener{
 			System.exit(1);
 		}
 		System.out.println("Connection established");
+		state = WAITFORCOLOR;
 
-		/*BufferedReader stdIn = new BufferedReader(new InputStreamReader(
-				System.in)); // In the future, here will be reader from some
-								// game listener
-*/		String fromServer;
-//		String fromUser;
+		String fromServer;
 
 		while ((fromServer = in.readLine()) != null) {
 			if (fromServer.equals("Bye."))
 				break;
-				
-			parse(fromServer);
 
-			/*fromUser = stdIn.readLine(); //here I should somehow connect game listener
-			if (fromUser != null) {
-				out.println(fromUser);
-			}*/
+			if (state == WAITFORCOLOR) {
+				playerDescriptor = parser.parseColor(fromServer);
+				if (playerDescriptor == 0)
+					state = SENDMOVE; // make first move if our color is black.
+				if (playerDescriptor == 1)
+					state = WAITING; // wait for first move if our color is
+										// white.
+			}
+
+			if (state == WAITING) {
+				parser.parseMove(fromServer);
+				Cell curCell = field.findCellByIJ(parser.getI(), parser.getJ());
+				if (!field.canMove(curCell)) out.println("Couldn't move this cell");
+				else field.tryMakeMove(curCell);
+				
+				if (field.passMove) out.println("Pass");				
+				else if (field.gameOver) sendGameOver();
+				else {
+					state = SENDMOVE;					
+				}				
+			}			
 		}
 
 		out.close();
 		in.close();
-//		stdIn.close();
 		socket.close();
-		
-	}
+	}	
 
-	private void parse(String fromServer) {
-		// TODO Auto-generated method stub
-		
+	private void sendGameOver() {
+		int blackScores = field.blackStones.size();
+		int whiteScores = field.whiteStones.size();
+		out.println("Game over by scores: " + blackScores + "to " + whiteScores);
+		state = GAMEOVER;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		if (state == SENDMOVE){
+			double x = e.getX();
+			double y = e.getY();
+			Cell cell = field.findCellByXY(x, y);
+
+			if (cell != null)
+				System.out.println("Cell: " + cell.i_index + ", " + cell.j_index);
+
+			if (field.canMove(cell)) {
+				field.tryMakeMove(cell);
+				String move = serializer.serializeMove(cell);
+				out.println(move);
+				state = WAITING;
+			}
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
