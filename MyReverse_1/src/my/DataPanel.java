@@ -90,4 +90,11 @@ public class DataPanel extends JPanel {
 		
 	}
 
+	public void setPlayerName(String playerName, int plNumber) {
+		if (playerName != null){
+			if (plNumber == 1) player1.setText(playerName);
+			else if (plNumber == 2) player2.setText(playerName);
+		}
+	}
+
 }

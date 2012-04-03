@@ -4,16 +4,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class ComputerPlayer {
+public class ComputerPlayer implements Player {
 
 	Map	<Integer, Cell> probablyCells = new TreeMap<Integer, Cell>();
 	int key = 0;
 	
-	public Cell makeMove(GameField field) {
-		
+	public void makeMove(GameField field) {		
 		buildProbableCellsList(field);
-		Cell moveCell = probablyCells.get(key);		
-		return moveCell;
+		Cell moveCell = probablyCells.get(key);	
+		System.out.println("Comp's move: " + moveCell.i_index + ", "
+				+ moveCell.j_index);
+		field.tryMakeMove(moveCell);
+//		if (field.movedSuccess)field.setPlayer();
 	}		
 
 	private void buildProbableCellsList(GameField f) {

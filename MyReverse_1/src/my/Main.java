@@ -34,19 +34,22 @@ public class Main {
 		JPanel buttonPanel = new JPanel();
 		DataPanel dataPanel = new DataPanel(frame);
 		JTextArea moveAndGameInfo = new JTextArea();
+		
 		moveAndGameInfo.setBackground(null);	
 		moveAndGameInfo.setFont(new Font(Font.DIALOG, Font.BOLD, 12));	
 		moveAndGameInfo.setEditable(false);
+		
 		dataPanel.add(moveAndGameInfo);		
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(150, 100, 900, 500);
+		frame.setBounds(150, 100, 900, 500);		
 		
-		GameField field = new GameField(frame, moveAndGameInfo);
-		
-		PlayersManager plManager = new PlayersManager(frame, field, dataPanel);
+		PlayersManager plManager = new PlayersManager(frame, dataPanel);
 		plManager.setPlayConfig();
 		
+		GameField field = new GameField(frame, moveAndGameInfo, plManager.player1, plManager.player2);
+		
+		plManager.addListeners(field);
 		initButtons(buttonPanel, field, frame, plManager);		
 		
 		Container container = frame.getContentPane();

@@ -6,9 +6,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 public class Cell implements Cloneable {
-	double relativeX, relativeY, side;
+	double relativeX, relativeY, gameFieldY, side;
 	int i_index, j_index;
-	int descriptor = 2;
+	int descriptor = 2;	
 
 	boolean free = true;
 	Color stoneColor = Color.RED;
@@ -25,6 +25,7 @@ public class Cell implements Cloneable {
 	public void paint(double fieldX, double fieldY, Graphics2D g) {
 		g.draw(new Rectangle2D.Double(fieldX + relativeX, fieldY + relativeY,
 				side, side));
+		gameFieldY = fieldY;
 		if (!free) {
 			// g.draw(new Ellipse2D.Double(fieldX + relativeX + 3, fieldY
 			// + relativeY + 3, side - 6, side - 6));
@@ -43,10 +44,10 @@ public class Cell implements Cloneable {
 			stoneColor = whiteColor;
 	}
 
-	public boolean contains(double x, double y, double gamefieldY) {
+	public boolean contains(double x, double y) {
 		if ((relativeX < x) && (x < relativeX + side)) {
-			if (((gamefieldY + relativeY) < y)
-					&& (y < (gamefieldY + relativeY + side)))
+			if (((gameFieldY + relativeY) < y)
+					&& (y < (gameFieldY + relativeY + side)))
 				return true;
 		}
 		return false;
