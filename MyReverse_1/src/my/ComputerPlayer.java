@@ -36,4 +36,10 @@ public class ComputerPlayer implements Player {
 		}
 	}
 
+	@Override
+	public int getState() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

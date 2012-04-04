@@ -2,6 +2,8 @@ package my;
 
 
 
+import java.awt.Font;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -10,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 public class DataPanel extends JPanel {
 
@@ -18,6 +21,7 @@ public class DataPanel extends JPanel {
 	String player1Name = new String("Player 1 (Black)  VS");
 	String player2Name = new String("Player 2 (White)");
 	JPanel names, setButtons;
+	JTextArea moveAndGameInfo;
 
 	JLabel head = new JLabel("Players info:");
 	JLabel player1, player2;
@@ -25,8 +29,8 @@ public class DataPanel extends JPanel {
 	public DataPanel(JFrame frame) {
 		this.frame = frame;
 		createNameLabels();
-//		createScoreLabel();
 		createChangeButtons();
+		createMoveAndGameInfo();
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(30, 0, 400, 10));
@@ -34,6 +38,14 @@ public class DataPanel extends JPanel {
 		head.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		names.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		setButtons.setAlignmentX(JComponent.CENTER_ALIGNMENT);	
+	}
+
+	private void createMoveAndGameInfo() {
+		moveAndGameInfo = new JTextArea();		
+		moveAndGameInfo.setBackground(null);	
+		moveAndGameInfo.setFont(new Font(Font.DIALOG, Font.BOLD, 12));	
+		moveAndGameInfo.setEditable(false);
+		add(moveAndGameInfo);
 	}
 
 	private void createNameLabels() {
@@ -74,13 +86,13 @@ public class DataPanel extends JPanel {
 		if (descriptor == 0) {
 			player1.setText("Computer (Black) VS");
 			player2.setText(player2Name);
-			setButtons.remove(0);
+//			setButtons.remove(0);
 		}
 		
 		if (descriptor == 1) {
 			player1.setText(player1Name);
 			player2.setText("Computer (White)");
-			setButtons.remove(1);
+//			setButtons.remove(1);
 		}
 	}
 

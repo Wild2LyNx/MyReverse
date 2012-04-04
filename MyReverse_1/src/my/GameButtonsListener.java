@@ -2,7 +2,6 @@ package my;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,13 +12,15 @@ public class GameButtonsListener implements ActionListener {
 	JFrame frame;
 	GameField field;
 	JPanel buttonPanel;
+	DataPanel dataPanel;
 	PlayersManager plManager;
 	boolean fieldIsStopped = false;
 
-	public GameButtonsListener(JFrame fr, GameField f, JPanel p, PlayersManager plMng) {
+	public GameButtonsListener(JFrame fr, GameField f, JPanel bp, DataPanel dp, PlayersManager plMng) {
 		this.frame = fr;
 		this.field = f;
-		this.buttonPanel = p;
+		this.buttonPanel = bp;
+		this.dataPanel = dp;
 		this.plManager = plMng;
 	}
 
@@ -78,16 +79,10 @@ public class GameButtonsListener implements ActionListener {
 	}
 
 	private void makeNewGame() {
-		field.newGame();
-		field.repaint();
-		
-		MouseListener[] mls = (MouseListener[])(field.getListeners(MouseListener.class));
-		try {
-			 field.removeMouseListener(mls[0]);
-		}
-		catch (ArrayIndexOutOfBoundsException ex) {
-		}
-		
+		System.out.println("New game");
+		frame.setVisible(false);		
 		plManager.setPlayConfig();
+		field.newGame();
+		frame.setVisible(true);
 	}
 }

@@ -48,7 +48,7 @@ public class GameListenerForComp extends MouseAdapter {
 				setPlayerTurn();
 				return;
 			}
-			c = computer.makeMove(field);
+//			c = computer.makeMove(field);
 
 			if (c != null) {
 				System.out.println("Comp's move: " + c.i_index + ", "
@@ -85,7 +85,7 @@ public class GameListenerForComp extends MouseAdapter {
 			}
 		}
 		if (compsMove) {
-			c = computer.makeMove(field);
+//			c = computer.makeMove(field);
 			if (c != null)
 				field.tryMakeMove(c);
 			setPlayerTurn();

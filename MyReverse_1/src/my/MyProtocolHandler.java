@@ -163,4 +163,10 @@ public class MyProtocolHandler implements MouseListener, Player {
 		
 	}
 
+	@Override
+	public int getState() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

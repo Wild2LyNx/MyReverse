@@ -13,8 +13,7 @@ public class Human extends MouseAdapter implements Player{
 	public void mouseClicked(MouseEvent e) {
 		if (state == MOVING){
 		double x = e.getX();
-		double y = e.getY();
-		System.out.println("here");
+		double y = e.getY();		
 		Cell cell = findCellByXY(x, y, field.allCells);
 
 		if (cell != null)
@@ -22,8 +21,7 @@ public class Human extends MouseAdapter implements Player{
 		field.tryMakeMove(cell);
 		
 		if (field.movedSuccess) {
-			state = WAITING;
-//			field.setPlayer();
+			state = WAITING;			
 			this.field = null;
 		}
 		}
@@ -41,5 +39,9 @@ public class Human extends MouseAdapter implements Player{
 	public void makeMove(GameField gameField) {
 		state = MOVING;
 		this.field = gameField;
+	}
+	@Override
+	public int getState() {
+		return state;
 	}
 }
