@@ -18,7 +18,7 @@ public class GameField extends JComponent {
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
 	JTextArea moveAndGameInfo;
-	int cellCount = 8;	
+	int cellCount = 8;
 	int moveCounter = 0;
 	int redoCounter = 0;
 	double gameFieldSide, gameFieldX, gamefieldY, cellSide;
@@ -32,23 +32,41 @@ public class GameField extends JComponent {
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
 	ArrayList<Cell> whiteStones = new ArrayList<Cell>();
 	ArrayList<Cell> freeCells = new ArrayList<Cell>();
-	ArrayList<Cell> possibleCells = new ArrayList<Cell>();//Cells where at least one player can move exactly now 
-	ArrayList<Cell> changeVector = new ArrayList<Cell>();//Vector of cells with stones in one direction, which will change color after move
+	ArrayList<Cell> possibleCells = new ArrayList<Cell>();// Cells where at
+															// least one player
+															// can move exactly
+															// now
+	ArrayList<Cell> changeVector = new ArrayList<Cell>();// Vector of cells with
+															// stones in one
+															// direction, which
+															// will change color
+															// after move
 
-	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();//Vector of main arrays "allCells". From here we take main array to make undo action.
-	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();//Vector of main arrays "allCells". From here we take main array to make redo action.
+	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();// Vector of main
+															// arrays
+															// "allCells". From
+															// here we take main
+															// array to make
+															// undo action.
+	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();// Vector of main
+															// arrays
+															// "allCells". From
+															// here we take main
+															// array to make
+															// redo action.
 
 	public GameField(JFrame f, JTextArea tArea, PlayersManager pm) {
 		this.frame = f;
-		this.moveAndGameInfo = tArea;//field with information which player should to move and scores of both.
+		this.moveAndGameInfo = tArea;// field with information which player
+										// should to move and scores of both.
 		this.plManager = pm;
 		player1 = plManager.player1;
 		player2 = plManager.player2;
 		initDimensions();
 		initCells();
-	}	
+	}
 
-	//Initialize empty desk (game field) with 4 first stones. 
+	// Initialize empty desk (game field) with 4 first stones.
 	private void initCells() {
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
@@ -57,8 +75,9 @@ public class GameField extends JComponent {
 			}
 		}
 	}
-	
-	//this method draws desk against frame dimensions. Theoretically it should provide re-drawing of the desk when frame resized. But not now :(  
+
+	// this method draws desk against frame dimensions. Theoretically it should
+	// provide re-drawing of the desk when frame resized. But not now :(
 	private void initDimensions() {
 		double minDimension = Math.min(frame.getHeight(), frame.getWidth());
 		gameFieldSide = minDimension - 70;
@@ -92,11 +111,12 @@ public class GameField extends JComponent {
 				cg.paint(0, gamefieldY, g2);
 			}
 		}
-		setPlayerString();		
-		if (moveCounter == 0) setPlayer();
+		setPlayerString();
+		if (moveCounter == 0)
+			setPlayer();
 	}
 
-	private void setPlayerString() {		
+	private void setPlayerString() {
 		moveAndGameInfo.setText("");
 		String player = new String();
 		int d = moveCounter % 2;
@@ -105,10 +125,10 @@ public class GameField extends JComponent {
 		}
 		if (d == 1) {
 			player = "Current move: white";
-		}				
+		}
 		moveAndGameInfo.append(player + "\n");
 		String scores = setScores();
-		moveAndGameInfo.append(scores);						
+		moveAndGameInfo.append(scores);
 	}
 
 	private String setScores() {
@@ -426,7 +446,7 @@ public class GameField extends JComponent {
 		player1 = plManager.player1;
 		player2 = plManager.player2;
 		plManager.addListeners(this);
-		initCells();		
+		initCells();
 		setPlayer();
 	}
 
@@ -435,55 +455,68 @@ public class GameField extends JComponent {
 		redoCounter++;
 		moveCounter--;
 		possibleCells.clear();
-		Cell lastAllCells[][] = undoAllCells.get(moveCounter-1);
+		Cell lastAllCells[][] = undoAllCells.get(moveCounter - 1);
 
 		for (int i = 0; i < cellCount; i++) {
-			for (int j = 0; j < cellCount; j++) {				
+			for (int j = 0; j < cellCount; j++) {
 				allCells[i][j] = lastAllCells[i][j];
 			}
 		}
-		
+
 		for (int i = 0; i < cellCount; i++) {
-			for (int j = 0; j < cellCount; j++) {				
+			for (int j = 0; j < cellCount; j++) {
 				setPossibleCells(i, j);
 			}
 		}
-		
+
 		setStoneLists();
 
 		System.out.println("Undo");
 		repaint();
-		
+		if ((plManager.kindOfPlayer1 == "Computer")
+				| (plManager.kindOfPlayer2 == "Computer")) {
+			if (redoCounter == 1)
+				undo(); // it's made because the computer player is too fast and
+						// make his move on the spot before something another
+						// can happen (You are even will not detect that the
+						// move was cancelled).
+		}
 		setPlayer();
 	}
 
 	private void setPlayer() {
 		int d = moveCounter % 2;
 		System.out.println(d);
-		if (d == 0) curPlayer = player1;
-		else if (d == 1) curPlayer = player2;
+		if (d == 0)
+			curPlayer = player1;
+		else if (d == 1)
+			curPlayer = player2;
 		movedSuccess = false;
 		curPlayer.makeMove(this);
 		System.out.println("Current player state: " + curPlayer.getState());
 	}
 
 	private void checkMoveIsPossible() {
-		if (possibleCells.isEmpty()|blackStones.isEmpty()|whiteStones.isEmpty()) generateGameOver();
-		else if (!moveIsPossible()){
-			if (!moveIsPossibleForNext())generateGameOver();
-			else generatePass();	
+		if (possibleCells.isEmpty() | blackStones.isEmpty()
+				| whiteStones.isEmpty())
+			generateGameOver();
+		else if (!moveIsPossible()) {
+			if (!moveIsPossibleForNext())
+				generateGameOver();
+			else
+				generatePass();
 		}
-		
+
 	}
 
 	private void saveForRedo() {
 		Cell lastAllCells[][] = new Cell[cellCount][cellCount];
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
-				lastAllCells[i][j] = allCells[i][j].clone();				
+				lastAllCells[i][j] = allCells[i][j].clone();
 			}
-		}		
-		redoAllCells.add(redoCounter, lastAllCells);		
+		}
+		redoAllCells.add(redoCounter, lastAllCells);
 	}
 
 	private void setStoneLists() {
@@ -506,10 +539,10 @@ public class GameField extends JComponent {
 		Cell lastAllCells[][] = new Cell[cellCount][cellCount];
 		for (int i = 0; i < cellCount; i++) {
 			for (int j = 0; j < cellCount; j++) {
-				lastAllCells[i][j] = allCells[i][j].clone();				
+				lastAllCells[i][j] = allCells[i][j].clone();
 			}
-		}		
-		undoAllCells.add(moveCounter-1, lastAllCells);
+		}
+		undoAllCells.add(moveCounter - 1, lastAllCells);
 	}
 
 	public void redo() {
@@ -519,21 +552,21 @@ public class GameField extends JComponent {
 		Cell lastAllCells[][] = redoAllCells.get(redoCounter);
 
 		for (int i = 0; i < cellCount; i++) {
-			for (int j = 0; j < cellCount; j++) {				
+			for (int j = 0; j < cellCount; j++) {
 				allCells[i][j] = lastAllCells[i][j];
 			}
 		}
-		
+
 		for (int i = 0; i < cellCount; i++) {
-			for (int j = 0; j < cellCount; j++) {				
+			for (int j = 0; j < cellCount; j++) {
 				setPossibleCells(i, j);
 			}
 		}
-		
+
 		setStoneLists();
 
 		System.out.println("Redo");
-		repaint();		
+		repaint();
 		setPlayer();
 	}
 
@@ -563,17 +596,18 @@ public class GameField extends JComponent {
 	public boolean moveIsPossibleForNext() {
 		moveCounter++;
 		for (Cell c : possibleCells) {
-			if (canMove(c)){
+			if (canMove(c)) {
 				moveCounter--;
 				return true;
-			}				
+			}
 		}
 		moveCounter--;
 		return false;
 	}
 
 	public Cell findCellByIJ(int i, int j) {
-		if ((i < 0)|(i > cellCount)|(j < 0)|(j > cellCount)) return null;
+		if ((i < 0) | (i > cellCount) | (j < 0) | (j > cellCount))
+			return null;
 		return (allCells[i][j]);
 	}
 
@@ -587,23 +621,33 @@ public class GameField extends JComponent {
 			movedSuccess = true;
 			moveCounter++;
 			resetRedo();
-		}				
+		}
 		System.out.println("Moved success: " + movedSuccess);
 		checkMoveIsPossible();
 		repaint();
-		if ((movedSuccess)&&(!gameOver)) setPlayer();	
+		if ((movedSuccess) && (!gameOver))
+			setPlayer();
 	}
 
 	public void generatePass() {
 		passMove = true;
+		int d = moveCounter % 2;
+		String curPlayer = null;
+		if (d == 0)
+			curPlayer = "black";
+		else if (d == 1)
+			curPlayer = "white";
+
 		String message = new String(
-				"Unfortunaetly, You have no possible moves, so You have to pass Your move :(");
+				"Unfortunaetly, "
+						+ curPlayer
+						+ " player have no possible moves, so he have to pass his move :(");
 		JOptionPane.showMessageDialog(this, message, "I'm sorry",
 				JOptionPane.INFORMATION_MESSAGE, null);
 		if (moveCounter != 0)
 			autosave();
 		moveCounter++;
-		resetRedo();	
+		resetRedo();
 		setPlayer();
 	}
 
@@ -622,7 +666,7 @@ public class GameField extends JComponent {
 			message = "The game is a draw";
 
 		JOptionPane.showMessageDialog(this, message, "Game over",
-				JOptionPane.INFORMATION_MESSAGE, null);		
+				JOptionPane.INFORMATION_MESSAGE, null);
 	}
 
 }
