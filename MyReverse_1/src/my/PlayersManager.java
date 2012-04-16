@@ -96,10 +96,6 @@ public class PlayersManager {
 
 				settingsPanel.add(servSettings, BorderLayout.CENTER);
 				settingsPanel.add(okButton, BorderLayout.AFTER_LAST_LINE);
-				/*
-				 * okButton.setSize(new Dimension(20, 10));
-				 * settingsPanel.repaint();
-				 */
 
 				settingDialog.setContentPane(settingsPanel);
 				settingDialog.pack();
@@ -108,9 +104,8 @@ public class PlayersManager {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if ((servSettings.hostNameIsCorrect)
-								&& (servSettings.portNumberIsCorrect)) {
-							
+						if (servSettings.portNumberIsCorrect) {
+							process(servSettings);
 							settingDialog.setVisible(false);
 							settingDialog.dispose();
 						} else {
@@ -120,9 +115,33 @@ public class PlayersManager {
 						}
 					}
 
+					private void process(ServSettingsPanel servSettings) {	
+						int descriptor = servSettings.colorDescriptor;
+						if (descriptor == 0){
+							String playerName = null;
+							playerName = servSettings.playerName;
+							dataPanel.setPlayerName(playerName, descriptor + 1);
+							System.out.println("Player" + descriptor + 1 + " name: "
+									+ playerName);
+							
+							player1 = new Human();
+							player2 = new Server(servSettings.portNumber);
+						} else if (descriptor == 1){
+							String playerName = null;
+							playerName = servSettings.playerName;
+							dataPanel.setPlayerName(playerName, descriptor + 1);
+							System.out.println("Player" + descriptor + 1 + " name: "
+									+ playerName);
+							
+							player1 = new Server(servSettings.portNumber);
+							player2 = new Human();
+						}						
+
+					}
+
 				});
 
-				settingDialog.setSize(new Dimension(300, 200));
+				settingDialog.setSize(new Dimension(400, 250));
 				settingDialog.setLocationRelativeTo(frame);
 				return settingDialog;
 			}
