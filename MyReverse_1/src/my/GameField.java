@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -12,6 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 
 public class GameField extends JComponent {
 
@@ -27,6 +30,7 @@ public class GameField extends JComponent {
 	boolean movedSuccess = false;
 	PlayersManager plManager;
 	Player player1, player2, curPlayer;
+	ArrayList<Player> listeners = new ArrayList<Player>();
 
 	Cell allCells[][] = new Cell[cellCount][cellCount];
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
@@ -446,8 +450,7 @@ public class GameField extends JComponent {
 		player1 = plManager.player1;
 		player2 = plManager.player2;
 		plManager.addListeners(this);
-		initCells();
-		setPlayer();
+		initCells();		
 	}
 
 	public void undo() {
@@ -473,9 +476,9 @@ public class GameField extends JComponent {
 
 		System.out.println("Undo");
 		repaint();
-		if ((plManager.kindOfPlayer1 == "Computer")
-				| (plManager.kindOfPlayer2 == "Computer")) {
-			if (redoCounter == 1)
+		if ((plManager.player1.getClass() == ComputerPlayer.class)
+				| (plManager.player2.getClass() == ComputerPlayer.class)) {
+			if (redoCounter%2 == 1)
 				undo(); // it's made because the computer player is too fast and
 						// make his move on the spot before something another
 						// can happen (You are even will not detect that the
@@ -625,8 +628,19 @@ public class GameField extends JComponent {
 		System.out.println("Moved success: " + movedSuccess);
 		checkMoveIsPossible();
 		repaint();
-		if ((movedSuccess) && (!gameOver))
-			setPlayer();
+		if ((movedSuccess) && (!gameOver)){
+			 final Timer timer = new Timer(100, new ActionListener() {
+		            public void actionPerformed(ActionEvent e) {
+		            	setPlayer();
+		            }
+		        });
+		        timer.setRepeats(false);
+		        timer.start();
+		        
+		        for (int i = 0; i < listeners.size(); i++) {
+					listeners.get(i).stateChanged(this, cell);
+				}
+		}			
 	}
 
 	public void generatePass() {
@@ -667,6 +681,11 @@ public class GameField extends JComponent {
 
 		JOptionPane.showMessageDialog(this, message, "Game over",
 				JOptionPane.INFORMATION_MESSAGE, null);
+	}
+
+	public void setListeners(ArrayList<Player> listeners) {
+		this.listeners.clear();
+		this.listeners = listeners;		
 	}
 
 }

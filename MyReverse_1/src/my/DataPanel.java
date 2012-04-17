@@ -104,8 +104,14 @@ public class DataPanel extends JPanel {
 
 	public void setPlayerName(String playerName, int plNumber) {
 		if (playerName != null){
-			if (plNumber == 1) player1.setText(playerName  + " (Black)  : ");
-			else if (plNumber == 2) player2.setText(playerName + " (White)");
+			if (plNumber == 1) {
+				player1Name = playerName;
+				player1.setText(playerName  + " (Black)  : ");
+			}
+			else if (plNumber == 2) {
+				player2Name = playerName;
+				player2.setText(playerName + " (White)");
+			}
 		}
 	}
 

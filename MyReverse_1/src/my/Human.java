@@ -4,14 +4,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Human extends MouseAdapter implements Player{
-	private static final int WAITING = 0;
-	private static final int MOVING = 1;
-	int state = WAITING; 
+	int state = States.WAITING; 
 	GameField field;
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (state == MOVING){
+		if (state == States.MOVING){
 		double x = e.getX();
 		double y = e.getY();		
 		Cell cell = findCellByXY(x, y, field.allCells);
@@ -21,7 +19,7 @@ public class Human extends MouseAdapter implements Player{
 		field.tryMakeMove(cell);
 		
 		if (field.movedSuccess) {
-			state = WAITING;			
+			state = States.WAITING;			
 			this.field = null;
 		}
 		}
@@ -37,11 +35,16 @@ public class Human extends MouseAdapter implements Player{
 	}
 	@Override
 	public void makeMove(GameField gameField) {
-		state = MOVING;
+		state = States.MOVING;
 		this.field = gameField;
 	}
 	@Override
 	public int getState() {
 		return state;
+	}
+	@Override
+	public void stateChanged(GameField gameField, Cell cell) {
+		// TODO Auto-generated method stub
+		
 	}
 }

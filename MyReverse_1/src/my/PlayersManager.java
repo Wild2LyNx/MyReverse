@@ -25,6 +25,8 @@ public class PlayersManager {
 	Player player1, player2;
 	SettingsPanel player1Panel, player2Panel;
 	String kindOfPlayer1, kindOfPlayer2;
+	ArrayList<Player> listeners = new ArrayList<Player>();
+	ArrayList<Human> humans = new ArrayList<Human>();
 	private static final String defPlayer1Name = new String("Player1 (Black)");
 	private static final String defPlayer2Name = new String("Player2 (White)");
 
@@ -38,6 +40,8 @@ public class PlayersManager {
 	}
 
 	public void setPlayConfig() {
+		listeners.clear();
+		humans.clear();
 		final JDialog choiseDialog = new JDialog(frame, "Alternative choice",
 				true);
 		choiseDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -110,32 +114,37 @@ public class PlayersManager {
 							settingDialog.dispose();
 						} else {
 							JOptionPane.showMessageDialog(settingDialog,
-									"Some data is incorrect or isn't inputed.", "Error",
-									JOptionPane.INFORMATION_MESSAGE, null);
+									"Some data is incorrect or isn't inputed.",
+									"Error", JOptionPane.INFORMATION_MESSAGE,
+									null);
 						}
 					}
 
-					private void process(ServSettingsPanel servSettings) {	
+					private void process(ServSettingsPanel servSettings) {
 						int descriptor = servSettings.colorDescriptor;
-						if (descriptor == 0){
+						if (descriptor == 0) {
 							String playerName = null;
 							playerName = servSettings.playerName;
 							dataPanel.setPlayerName(playerName, descriptor + 1);
-							System.out.println("Player" + descriptor + 1 + " name: "
-									+ playerName);
-							
+							System.out.println("Player" + descriptor + 1
+									+ " name: " + playerName);
+
 							player1 = new Human();
+							humans.add((Human) player1);
 							player2 = new Server(servSettings.portNumber);
-						} else if (descriptor == 1){
+							listeners.add(player2);
+						} else if (descriptor == 1) {
 							String playerName = null;
 							playerName = servSettings.playerName;
 							dataPanel.setPlayerName(playerName, descriptor + 1);
-							System.out.println("Player" + descriptor + 1 + " name: "
-									+ playerName);
-							
+							System.out.println("Player" + descriptor + 1
+									+ " name: " + playerName);
+
 							player1 = new Server(servSettings.portNumber);
+							listeners.add(player1);
 							player2 = new Human();
-						}						
+							humans.add((Human) player2);
+						}
 
 					}
 
@@ -171,33 +180,31 @@ public class PlayersManager {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						kindOfPlayer1 = player1Panel.getCommand();
-						player1 = handle(kindOfPlayer1, 1);
-						kindOfPlayer2 = player2Panel.getCommand();
-						player2 = handle(kindOfPlayer2, 2);
+						String playerName = null;
+						if (player1Panel.getCommand() == "Human") {
+							player1 = new Human();
+							humans.add((Human) player1);
+							dataPanel.setPlayerName(playerName, 1);
+							System.out.println("Player" + 1 + " name: "
+									+ playerName);
+						} else if (player1Panel.getCommand() == "Computer") {
+							player1 = new ComputerPlayer();
+							dataPanel.setNameForComp(0);
+						}
+						
+						if (player2Panel.getCommand() == "Human") {
+							player2 = new Human();
+							humans.add((Human) player2);
+							dataPanel.setPlayerName(playerName, 2);
+							System.out.println("Player" + 1 + " name: "
+									+ playerName);
+						} else if (player2Panel.getCommand() == "Computer") {
+							player2 = new ComputerPlayer();
+							dataPanel.setNameForComp(0);
+						}
+						
 						settingDialog.setVisible(false);
 						settingDialog.dispose();
-					}
-
-					private Player handle(String kindOfPlayer, int plNumber) {
-						if (kindOfPlayer == "Human") {
-							String playerName = null;
-							if (plNumber == 1)
-								playerName = player1Panel.playerName;
-							else if (plNumber == 2)
-								playerName = player2Panel.playerName;
-							dataPanel.setPlayerName(playerName, plNumber);
-							System.out.println("Player" + plNumber + " name: "
-									+ playerName);
-
-							return (new Human());
-						}
-
-						if (kindOfPlayer == "Computer") {
-							dataPanel.setNameForComp(plNumber - 1);
-							return (new ComputerPlayer());
-						}
-						return null;
 					}
 				});
 				settingDialog.setSize(new Dimension(700, 300));
@@ -234,9 +241,9 @@ public class PlayersManager {
 	}
 
 	public void addListeners(GameField field) {
-		if (kindOfPlayer1 == "Human")
-			field.addMouseListener((MouseListener) player1);
-		if (kindOfPlayer2 == "Human")
-			field.addMouseListener((MouseListener) player2);
+		for (int i = 0; i < humans.size(); i++) {
+			field.addMouseListener((MouseListener) humans.get(i));
+		}
+		field.setListeners(listeners);
 	}
 }

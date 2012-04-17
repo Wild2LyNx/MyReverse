@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class MyProtocolHandler implements MouseListener, Player {
+public class MyProtocolHandler implements MouseListener {
 	private static final int WAITING = 0;
 	private static final int SENTAUTHREQUEST = 1;
 	private static final int WAITFORCOLOR = 2;
@@ -155,18 +155,6 @@ public class MyProtocolHandler implements MouseListener, Player {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void makeMove(GameField gameField) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int getState() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }

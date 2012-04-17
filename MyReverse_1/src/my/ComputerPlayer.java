@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
+
 public class ComputerPlayer implements Player {
 
 	Map	<Integer, Cell> probablyCells = new TreeMap<Integer, Cell>();
@@ -13,7 +14,7 @@ public class ComputerPlayer implements Player {
 		buildProbableCellsList(field);
 		Cell moveCell = probablyCells.get(key);	
 		System.out.println("Comp's move: " + moveCell.i_index + ", "
-				+ moveCell.j_index);
+				+ moveCell.j_index);		
 		field.tryMakeMove(moveCell);
 //		if (field.movedSuccess)field.setPlayer();
 	}		
@@ -40,6 +41,12 @@ public class ComputerPlayer implements Player {
 	public int getState() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void stateChanged(GameField gameField, Cell cell) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
