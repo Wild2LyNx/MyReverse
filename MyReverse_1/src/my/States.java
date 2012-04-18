@@ -8,4 +8,6 @@ public class States {
 	public static final int WAITforCOLOR = 4;
 	public static final int SENDMOVE = 5;
 	public static final int GAMEOVER = 6;
+	public static final int WAITforDATA = 7;
+	public static final int START = 8;
 }

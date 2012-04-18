@@ -123,7 +123,7 @@ public class PlayersManager {
 					private void process(ServSettingsPanel servSettings) {
 						int descriptor = servSettings.colorDescriptor;
 						if (descriptor == 0) {
-							String playerName = null;
+							String playerName = defPlayer1Name;
 							playerName = servSettings.playerName;
 							dataPanel.setPlayerName(playerName, descriptor + 1);
 							System.out.println("Player" + descriptor + 1
@@ -131,16 +131,18 @@ public class PlayersManager {
 
 							player1 = new Human();
 							humans.add((Human) player1);
-							player2 = new Server(servSettings.portNumber);
+							player2 = new Server(servSettings.portNumber,
+									descriptor, playerName);
 							listeners.add(player2);
 						} else if (descriptor == 1) {
-							String playerName = null;
+							String playerName = defPlayer2Name;
 							playerName = servSettings.playerName;
 							dataPanel.setPlayerName(playerName, descriptor + 1);
 							System.out.println("Player" + descriptor + 1
 									+ " name: " + playerName);
 
-							player1 = new Server(servSettings.portNumber);
+							player1 = new Server(servSettings.portNumber,
+									descriptor, playerName);
 							listeners.add(player1);
 							player2 = new Human();
 							humans.add((Human) player2);
@@ -184,6 +186,7 @@ public class PlayersManager {
 						if (player1Panel.getCommand() == "Human") {
 							player1 = new Human();
 							humans.add((Human) player1);
+							playerName = player1Panel.playerName;
 							dataPanel.setPlayerName(playerName, 1);
 							System.out.println("Player" + 1 + " name: "
 									+ playerName);
@@ -191,18 +194,19 @@ public class PlayersManager {
 							player1 = new ComputerPlayer();
 							dataPanel.setNameForComp(0);
 						}
-						
+
 						if (player2Panel.getCommand() == "Human") {
 							player2 = new Human();
 							humans.add((Human) player2);
+							playerName = player2Panel.playerName;
 							dataPanel.setPlayerName(playerName, 2);
 							System.out.println("Player" + 1 + " name: "
 									+ playerName);
 						} else if (player2Panel.getCommand() == "Computer") {
 							player2 = new ComputerPlayer();
-							dataPanel.setNameForComp(0);
+							dataPanel.setNameForComp(1);
 						}
-						
+
 						settingDialog.setVisible(false);
 						settingDialog.dispose();
 					}

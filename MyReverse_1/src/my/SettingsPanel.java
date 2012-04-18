@@ -1,6 +1,7 @@
 package my;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import javax.swing.JTextField;
 public class SettingsPanel extends JPanel implements ActionListener {	
 	JPanel infoPanel;
 	String playerName;
+	JLabel headForName, confirmInput;
 	String command;
 	boolean server, client;
 	boolean hostNameIsCorrect = false;
@@ -44,7 +46,7 @@ public class SettingsPanel extends JPanel implements ActionListener {
 		
 		add(playVars, BorderLayout.PAGE_START);
 		playVars.setBounds(new Rectangle(20, 5));
-		add(infoPanel, BorderLayout.PAGE_END);
+		add(infoPanel, BorderLayout.CENTER);
 		setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		setOpaque(true);
 	}
@@ -54,10 +56,11 @@ public class SettingsPanel extends JPanel implements ActionListener {
 		if (nameString.equals(e.getActionCommand())) {
             JTextField source = (JTextField)e.getSource();
             playerName = source.getText();
+            confirmInput.setText("Player name: " + playerName);
         } else if (selectedNewVar.equals(e.getActionCommand())){
         	JComboBox cb = (JComboBox)e.getSource();
             String playVar = (String)cb.getSelectedItem();
-            updateSettingsPanel(playVar);
+            command = playVar;
         }
 	}
 
@@ -71,23 +74,26 @@ public class SettingsPanel extends JPanel implements ActionListener {
 		newSettingsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		
 		if (selectedVariant == "Human"){			
-			JLabel headForName = new JLabel();
+			headForName = new JLabel();
+			confirmInput = new JLabel();
+			headForName.setMinimumSize(new Dimension(300, 100));
+			headForName.setMaximumSize(new Dimension(300, 100));
 			headForName.setText("Input your name, please, and press Enter: ");
 			JTextField name = new JTextField(10);
+			name.setMaximumSize(new Dimension(250, 20));
 			headForName.setLabelFor(name);
 			name.setActionCommand(nameString);
 			name.addActionListener(this);
 
 			newSettingsPanel.add(headForName);
 			newSettingsPanel.add(name);			
+			newSettingsPanel.add(confirmInput);
 		}
 		
 		if (selectedVariant == "Computer"){	
 			newSettingsPanel = null;
 			playerName = "Computer";
-		}
-		
-		
+		}		
 		
 		infoPanel = newSettingsPanel;
 		repaint();
