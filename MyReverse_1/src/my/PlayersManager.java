@@ -31,8 +31,6 @@ public class PlayersManager {
 	private static final String defPlayer2Name = new String("Player2 (White)");
 
 	String networkHostName;
-	boolean server = false;
-	boolean client = false;
 
 	public PlayersManager(JFrame fr, DataPanel dp) {
 		frame = fr;
@@ -123,8 +121,7 @@ public class PlayersManager {
 					private void process(ServSettingsPanel servSettings) {
 						int descriptor = servSettings.colorDescriptor;
 						if (descriptor == 0) {
-							String playerName = defPlayer1Name;
-							playerName = servSettings.playerName;
+							String playerName = servSettings.playerName;
 							dataPanel.setPlayerName(playerName, descriptor + 1);
 							System.out.println("Player" + descriptor + 1
 									+ " name: " + playerName);
@@ -133,10 +130,10 @@ public class PlayersManager {
 							humans.add((Human) player1);
 							player2 = new Server(servSettings.portNumber,
 									descriptor, playerName);
+							
 							listeners.add(player2);
 						} else if (descriptor == 1) {
-							String playerName = defPlayer2Name;
-							playerName = servSettings.playerName;
+							String playerName = servSettings.playerName;
 							dataPanel.setPlayerName(playerName, descriptor + 1);
 							System.out.println("Player" + descriptor + 1
 									+ " name: " + playerName);

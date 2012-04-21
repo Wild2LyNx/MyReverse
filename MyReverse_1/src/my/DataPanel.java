@@ -18,8 +18,10 @@ public class DataPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	JFrame frame;
-	String player1Name = new String("Player 1 (Black)  VS");
-	String player2Name = new String("Player 2 (White)");
+	private static final String defPlayer1Name = new String("Player1 (Black) VS");
+	private static final String defPlayer2Name = new String("Player2 (White)");
+	String player1Name = defPlayer1Name;
+	String player2Name = defPlayer2Name;
 	JPanel names, setButtons;
 	JTextArea moveAndGameInfo;
 
@@ -106,7 +108,7 @@ public class DataPanel extends JPanel {
 		if (playerName != null){
 			if (plNumber == 1) {
 				player1Name = playerName;
-				player1.setText(playerName  + " (Black)  : ");
+				player1.setText(playerName  + " (Black)  VS ");
 			}
 			else if (plNumber == 2) {
 				player2Name = playerName;

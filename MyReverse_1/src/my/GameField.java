@@ -450,7 +450,7 @@ public class GameField extends JComponent {
 		player1 = plManager.player1;
 		player2 = plManager.player2;
 		plManager.addListeners(this);
-		initCells();		
+		initCells();
 	}
 
 	public void undo() {
@@ -478,7 +478,7 @@ public class GameField extends JComponent {
 		repaint();
 		if ((plManager.player1.getClass() == ComputerPlayer.class)
 				| (plManager.player2.getClass() == ComputerPlayer.class)) {
-			if (redoCounter%2 == 1)
+			if (redoCounter % 2 == 1)
 				undo(); // it's made because the computer player is too fast and
 						// make his move on the spot before something another
 						// can happen (You are even will not detect that the
@@ -628,19 +628,27 @@ public class GameField extends JComponent {
 		System.out.println("Moved success: " + movedSuccess);
 		checkMoveIsPossible();
 		repaint();
-		if ((movedSuccess) && (!gameOver)){
-			 final Timer timer = new Timer(100, new ActionListener() {
-		            public void actionPerformed(ActionEvent e) {
-		            	setPlayer();
-		            }
-		        });
-		        timer.setRepeats(false);
-		        timer.start();
-		        
-		        for (int i = 0; i < listeners.size(); i++) {
-					listeners.get(i).stateChanged(this, cell);
+		if ((movedSuccess) && (!gameOver)) {
+			for (int i = 0; i < listeners.size(); i++) {
+				listeners.get(i).stateChanged(this, cell);
+			}
+
+			final Timer timer = new Timer(100, new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					setPlayer();
 				}
-		}			
+			});
+			timer.setRepeats(false);
+			timer.start();
+
+		}
+		/*
+		 * Thread t = new Thread(new Runnable() {
+		 * 
+		 * @Override public void run() { // TODO Auto-generated method stub
+		 * 
+		 * } });
+		 */
 	}
 
 	public void generatePass() {
@@ -685,7 +693,7 @@ public class GameField extends JComponent {
 
 	public void setListeners(ArrayList<Player> listeners) {
 		this.listeners.clear();
-		this.listeners = listeners;		
+		this.listeners = listeners;
 	}
 
 }

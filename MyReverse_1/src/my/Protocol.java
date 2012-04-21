@@ -67,4 +67,15 @@ public class Protocol {
 		return outputLine;
 	}
 
+	public boolean processGOanswer(String answer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String processOppName(String inputLine) {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}
+
 }
