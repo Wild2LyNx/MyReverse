@@ -88,9 +88,8 @@ public class MyProtocolHandler implements MouseListener {
 										// white.
 			}
 
-			if (state == WAITING) {
-				parser.parseMove(fromServer);
-				Cell curCell = field.findCellByIJ(parser.getI(), parser.getJ());
+			if (state == WAITING) {				
+				Cell curCell = parser.parseMove(fromServer);;
 				if (!field.canMove(curCell)) out.println("Couldn't move this cell");
 				else field.tryMakeMove(curCell);
 				

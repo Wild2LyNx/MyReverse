@@ -696,4 +696,9 @@ public class GameField extends JComponent {
 		this.listeners = listeners;
 	}
 
+	public void newRound() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

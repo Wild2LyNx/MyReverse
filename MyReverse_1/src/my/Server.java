@@ -67,64 +67,42 @@ public class Server implements Player {
 		in = new BufferedReader(new InputStreamReader(
 				clientSocket.getInputStream()));
 
-		outputLine = protocol.processStartData(descriptor, playerName);
-		out.println(outputLine);
-
+		sendStartData(); //send player name (this computer) and color of remote user.
 		getOppName(in); // get opponent name
 
 		/*
-		 * Now, the game is started and we should to decide on the order of
-		 * operation: should we wait for the move of player on this comp or we
-		 * should read move of the opponent
+		 * Server class is instance of Player class so in terms of game field
+		 * it's even player like "Human" or "Computer". Hence we can consider
+		 * Server like an imitation of Human class (actually remote player).
+		 * Because of this we just waiting for calling from game field.
 		 */
 
-		if (descriptor == 0)
-			state = WAITING;
-		else if (descriptor == 1) {
-			state = MOVING;
-			listenNewMove();
-		}	
+		state = WAITING;
 	}
 
-	//this method sends request to the opponent would he like start new game or not.
-	private void processGameOver() {
-		outputLine = protocol.processGameOver();  
+	private void sendStartData() {
+		outputLine = serializer.serializeName(playerName);
 		out.println(outputLine);
-		handleGOanswer();
-	}
-
-	private void handleGOanswer() {
-		String answer = parser.parseNewLine(in);
-		boolean newGame = protocol.processGOanswer(answer);
-		if (newGame)newGame();
-		else
-			try {
-				breakConnection();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	}
-
-	private void newGame() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void breakConnection() throws IOException {
-		out.println("Bye.");
-		out.close();
-		in.close();
-		clientSocket.close();
-		serverSocket.close();		
+		outputLine = serializer.serializeColor(descriptor);
+		out.println(outputLine);
+		protocol.setState(States.WAITforDATA);
 	}
 
 	private void getOppName(BufferedReader in) {
-		String inputLine = parser.parseNewLine(in);
-		oppName = protocol.processOppName(inputLine);
+		oppName = parser.parseName(in);
+		String outputLine = protocol.processOppName(oppName);
+		out.println(outputLine);
 	}
-	
-	//this method returns opponent move to the game field.
+
+	// This method called from the game field for the remote player move
+	@Override
+	public void makeMove(GameField gameField) {
+		this.gameField = gameField;
+		state = MOVING;
+		listenNewMove();
+	}
+
+	// this method returns remote player move to the game field.
 	private void makeMove(Cell move) {
 		gameField.tryMakeMove(move);
 		if (gameField.movedSuccess) {
@@ -137,12 +115,15 @@ public class Server implements Player {
 		}
 	}
 
-	//This method calling for the opponent move
-	@Override
-	public void makeMove(GameField gameField) {
-		this.gameField = gameField;
-		state = MOVING;
-		listenNewMove();
+	private void listenNewMove() {
+		String inputLine = null;
+		inputLine = parser.parseNewLine(in);
+		if (inputLine == "Game over")
+			processGameOver();
+		else {
+			Cell move = parser.parseMove(inputLine);
+			makeMove(move);
+		}
 	}
 
 	@Override
@@ -161,22 +142,39 @@ public class Server implements Player {
 		}
 	}
 
-	private void listenNewMove() {
-		String inputLine = null;
-		try {
-			if (in.ready()) {
-				inputLine = parser.parseNewLine(in);
-				if (inputLine == "Game over")
-					processGameOver();
-				else {
-					Cell move = parser.parseMove(inputLine);
-					makeMove(move);
-				}
+	// this method sends request to the opponent would he like start new game or
+	// not.
+	private void processGameOver() {
+		outputLine = protocol.processGameOver();
+		out.println(outputLine);
+		handleGOanswer();
+	}
+
+	private void handleGOanswer() {
+		String answer = parser.parseNewLine(in);
+		boolean newGame = protocol.processGOanswer(answer);
+		if (newGame)
+			newGame();
+		else
+			try {
+				breakConnection();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			System.err.println("Could not listen input stream.");
-			System.exit(1);
-		}
+	}
+
+	private void newGame() {
+		state = WAITING;
+		gameField.newRound();
+	}
+
+	private void breakConnection() throws IOException {
+		out.println("Bye.");
+		out.close();
+		in.close();
+		clientSocket.close();
+		serverSocket.close();
 	}
 
 }
