@@ -697,8 +697,14 @@ public class GameField extends JComponent {
 	}
 
 	public void newRound() {
-		// TODO Auto-generated method stub
-		
+		gameOver = false;
+		moveCounter = 0;
+		blackStones.clear();
+		whiteStones.clear();
+		freeCells.clear();
+		possibleCells.clear();		
+		initCells();		
+		repaint();
 	}
 
 }

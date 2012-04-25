@@ -8,23 +8,23 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class ServSettingsPanel extends JPanel implements ActionListener {
+public class ClientSettingsPanel extends JPanel implements ActionListener{
 	protected static final String nameString = "nameTextField";
-	protected static final String selectedNewVar = "newPlayVariant";
+	protected static final String setHostName = "Set host name";
 	protected static final String setPortNumber = "Set port number";
 	protected static final String defaultName = "Player";
 
 	JPanel infoPanel;
-	String playerName;
+	JLabel confirmInput = new JLabel();
+	String playerName, hostName;
 	int portNumber = 0;
-	int colorDescriptor = 0;
-	JTextField inputPort;
+	JTextField inputHostName, inputPort;
+	boolean hostNameIsCorrect = false;
 	boolean portNumberIsCorrect = false;
 
 	/**
@@ -32,21 +32,14 @@ public class ServSettingsPanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ServSettingsPanel() {
+	public ClientSettingsPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
 		playerName = null;
+		inputHostName = new JTextField();
 		inputPort = new JTextField();
-
-		String[] playStrings = { "Black", "White" };
-
-		JComboBox playVars = new JComboBox(playStrings);
-		playVars.setSelectedIndex(0);
-
-		playVars.setActionCommand(selectedNewVar);
-		playVars.addActionListener(this);
 
 		JLabel headForName = new JLabel();
 		headForName.setText("Input your name, please, and press Enter: ");
@@ -54,6 +47,10 @@ public class ServSettingsPanel extends JPanel implements ActionListener {
 		headForName.setLabelFor(name);
 		name.setActionCommand(nameString);
 		name.addActionListener(this);
+
+		JButton selectButton = new JButton("Set host name");
+		selectButton.setActionCommand(setHostName);
+		selectButton.addActionListener(this);
 
 		JButton setPort = new JButton("Set port number");
 		setPort.setActionCommand(setPortNumber);
@@ -63,10 +60,14 @@ public class ServSettingsPanel extends JPanel implements ActionListener {
 		add(headForName);
 		add(name);
 		add(Box.createVerticalStrut(5));
-		add(playVars);
+		add(inputHostName);
+		add(Box.createVerticalStrut(5));
+		add(selectButton);
 		add(Box.createVerticalStrut(5));
 		add(inputPort);
 		add(setPort);
+		add(Box.createVerticalStrut(5));
+		add(confirmInput);
 	}
 
 	@Override
@@ -75,11 +76,18 @@ public class ServSettingsPanel extends JPanel implements ActionListener {
 			JTextField source = (JTextField) e.getSource();
 			playerName = source.getText();
 			if ((playerName == null)|(playerName.isEmpty())) playerName = defaultName;
+			confirmInput.setText("Player name: " + playerName);
 		} 
-		else if (selectedNewVar.equals(e.getActionCommand())) {
-			JComboBox cb = (JComboBox) e.getSource();
-			String color = (String) cb.getSelectedItem();
-			setColor(color);
+		else if (setHostName.equals(e.getActionCommand())) {
+			hostName = inputHostName.getText();
+			if ((hostName != null) && (!hostName.isEmpty())) {
+				hostNameIsCorrect = true;
+			}
+
+			if (hostName.isEmpty())
+				JOptionPane.showMessageDialog(infoPanel,
+						"You didn't input the name of server!", "Error",
+						JOptionPane.INFORMATION_MESSAGE, null);
 		} 
 		else if (setPortNumber.equals(e.getActionCommand())) {
 			try {
@@ -93,12 +101,5 @@ public class ServSettingsPanel extends JPanel implements ActionListener {
 				portNumberIsCorrect = true;
 			}
 		}
-	}
-
-	private void setColor(String color) {
-		if (color == "Black")
-			colorDescriptor = 0;
-		else if (color == "White")
-			colorDescriptor = 1;
 	}
 }

@@ -130,7 +130,7 @@ public class PlayersManager {
 							humans.add((Human) player1);
 							player2 = new Server(servSettings.portNumber,
 									descriptor, playerName);
-							
+
 							listeners.add(player2);
 						} else if (descriptor == 1) {
 							String playerName = servSettings.playerName;
@@ -155,8 +155,73 @@ public class PlayersManager {
 			}
 
 			private JDialog createConnectDialog() {
-				// TODO Auto-generated method stub
-				return null;
+				final JDialog settingDialog = new JDialog(frame,
+						"Game settings", true);
+				settingDialog
+						.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				JPanel settingsPanel = new JPanel();
+				final ClientSettingsPanel clientSettings = new ClientSettingsPanel();
+
+				JButton okButton = new JButton("Ok");
+
+				settingsPanel.add(clientSettings, BorderLayout.CENTER);
+				settingsPanel.add(okButton, BorderLayout.AFTER_LAST_LINE);
+
+				settingDialog.setContentPane(settingsPanel);
+				settingDialog.pack();
+
+				okButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if ((clientSettings.portNumberIsCorrect)
+								| (clientSettings.hostNameIsCorrect)) {
+							process(clientSettings);
+							settingDialog.setVisible(false);
+							settingDialog.dispose();
+						} else {
+							JOptionPane.showMessageDialog(settingDialog,
+									"Some data is incorrect or isn't inputed.",
+									"Error", JOptionPane.INFORMATION_MESSAGE,
+									null);
+						}
+					}
+
+					private void process(ClientSettingsPanel clientSettings) {
+						String playerName = clientSettings.playerName;
+						Client client = new Client(clientSettings.portNumber,
+								clientSettings.hostName, playerName);
+						int descriptor = client.getColor();
+						if (descriptor == 0) {
+							dataPanel.setPlayerName(playerName,
+									(descriptor + 1));
+							System.out.println("Player" + (descriptor + 1)
+									+ " name: " + playerName);
+
+							player1 = new Human();
+							humans.add((Human) player1);
+							player2 = client;
+
+							listeners.add(player2);
+						} else if (descriptor == 1) {
+							dataPanel.setPlayerName(playerName,
+									(descriptor + 1));
+							System.out.println("Player" + (descriptor + 1)
+									+ " name: " + playerName);
+
+							player1 = client;
+							listeners.add(player1);
+							player2 = new Human();
+							humans.add((Human) player2);
+						}
+
+					}
+
+				});
+
+				settingDialog.setSize(new Dimension(400, 250));
+				settingDialog.setLocationRelativeTo(frame);
+				return settingDialog;
 			}
 
 			private JDialog createSettingsDialog() {

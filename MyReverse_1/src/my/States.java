@@ -10,4 +10,5 @@ public class States {
 	public static final int GAMEOVER = 6;
 	public static final int WAITforDATA = 7;
 	public static final int START = 8;
+	public static final String regameSuggest = "The game is over. Would You like start new game? (y|n)";
 }
