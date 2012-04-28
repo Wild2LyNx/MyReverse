@@ -198,9 +198,11 @@ public class PlayersManager {
 							System.out.println("Player" + (descriptor + 1)
 									+ " name: " + playerName);
 
-							player1 = new Human();
-							humans.add((Human) player1);
+							player1 = new ComputerPlayer();
+//							humans.add((Human) player1);
 							player2 = client;
+							System.out.println("Player" + (descriptor + 1)
+									+ ": " + player2);
 
 							listeners.add(player2);
 						} else if (descriptor == 1) {
@@ -211,8 +213,8 @@ public class PlayersManager {
 
 							player1 = client;
 							listeners.add(player1);
-							player2 = new Human();
-							humans.add((Human) player2);
+							player2 = new ComputerPlayer();
+//							humans.add((Human) player2);
 						}
 
 					}

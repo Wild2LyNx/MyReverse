@@ -38,7 +38,7 @@ public class ServSettingsPanel extends JPanel implements ActionListener {
 		setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
 		playerName = null;
-		inputPort = new JTextField();
+		inputPort = new JTextField("42");
 
 		String[] playStrings = { "Black", "White" };
 

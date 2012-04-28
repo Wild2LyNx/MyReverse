@@ -6,4 +6,8 @@ public interface Player {
 	int getState();
 
 	void stateChanged(GameField gameField, Cell cell);
+
+	void passAction();
+
+	void processGameOver();
 }

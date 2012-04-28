@@ -67,7 +67,8 @@ public class Server implements Player {
 		in = new BufferedReader(new InputStreamReader(
 				clientSocket.getInputStream()));
 
-		sendStartData(); //send player name (this computer) and color of remote user.
+		sendStartData(); // send player name (this computer) and color of remote
+							// user.
 		getOppName(in); // get opponent name
 
 		/*
@@ -83,7 +84,7 @@ public class Server implements Player {
 	private void sendStartData() {
 		outputLine = serializer.serializeName(playerName);
 		out.println(outputLine);
-		outputLine = serializer.serializeColor(descriptor);
+		outputLine = serializer.serializeColor(inverseDescriptor(descriptor));
 		out.println(outputLine);
 		protocol.setState(States.WAITforDATA);
 	}
@@ -104,21 +105,19 @@ public class Server implements Player {
 
 	// this method returns remote player move to the game field.
 	private void makeMove(Cell move) {
-		gameField.tryMakeMove(move);
+		int i = move.i_index;
+		int j = move.j_index;
+		gameField.makeMove(i, j);
 		if (gameField.movedSuccess) {
-			lastMove = move;
+			lastMove = gameField.allCells[i][j];
 			state = WAITING;
-		}
-		if (gameField.gameOver) {
-			state = GAMEOVER;
-			processGameOver();
-		}
+		}		
 	}
 
 	private void listenNewMove() {
 		String inputLine = null;
 		inputLine = parser.parseNewLine(in);
-		if (inputLine == "Game over")
+		if (inputLine.equalsIgnoreCase("Game over"))
 			processGameOver();
 		else {
 			Cell move = parser.parseMove(inputLine);
@@ -144,7 +143,8 @@ public class Server implements Player {
 
 	// this method sends request to the opponent would he like start new game or
 	// not.
-	private void processGameOver() {
+	public void processGameOver() {
+		state = GAMEOVER;
 		outputLine = protocol.processGameOver();
 		out.println(outputLine);
 		handleGOanswer();
@@ -175,6 +175,11 @@ public class Server implements Player {
 		in.close();
 		clientSocket.close();
 		serverSocket.close();
+	}
+
+	@Override
+	public void passAction() {
+		state = WAITING;
 	}
 
 }

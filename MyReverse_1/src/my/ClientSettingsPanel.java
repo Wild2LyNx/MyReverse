@@ -38,8 +38,8 @@ public class ClientSettingsPanel extends JPanel implements ActionListener{
 		setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
 		playerName = null;
-		inputHostName = new JTextField();
-		inputPort = new JTextField();
+		inputHostName = new JTextField("localhost");
+		inputPort = new JTextField("42");
 
 		JLabel headForName = new JLabel();
 		headForName.setText("Input your name, please, and press Enter: ");

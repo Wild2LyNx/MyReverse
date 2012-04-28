@@ -625,14 +625,15 @@ public class GameField extends JComponent {
 			moveCounter++;
 			resetRedo();
 		}
-		System.out.println("Moved success: " + movedSuccess);
-		checkMoveIsPossible();
+		System.out.println("Moved success: " + movedSuccess);		
 		repaint();
-		if ((movedSuccess) && (!gameOver)) {
+		if ((movedSuccess)) {
 			for (int i = 0; i < listeners.size(); i++) {
 				listeners.get(i).stateChanged(this, cell);
 			}
-
+			checkMoveIsPossible();
+			
+			if ((!gameOver)&&(!passMove)){
 			final Timer timer = new Timer(100, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					setPlayer();
@@ -640,15 +641,8 @@ public class GameField extends JComponent {
 			});
 			timer.setRepeats(false);
 			timer.start();
-
+			}
 		}
-		/*
-		 * Thread t = new Thread(new Runnable() {
-		 * 
-		 * @Override public void run() { // TODO Auto-generated method stub
-		 * 
-		 * } });
-		 */
 	}
 
 	public void generatePass() {
@@ -666,6 +660,9 @@ public class GameField extends JComponent {
 						+ " player have no possible moves, so he have to pass his move :(");
 		JOptionPane.showMessageDialog(this, message, "I'm sorry",
 				JOptionPane.INFORMATION_MESSAGE, null);
+		for (int i = 0; i < listeners.size(); i++) {
+			listeners.get(i).passAction();
+		}
 		if (moveCounter != 0)
 			autosave();
 		moveCounter++;
@@ -689,6 +686,9 @@ public class GameField extends JComponent {
 
 		JOptionPane.showMessageDialog(this, message, "Game over",
 				JOptionPane.INFORMATION_MESSAGE, null);
+		for (int i = 0; i < listeners.size(); i++) {
+			listeners.get(i).processGameOver();
+		}
 	}
 
 	public void setListeners(ArrayList<Player> listeners) {
@@ -705,6 +705,10 @@ public class GameField extends JComponent {
 		possibleCells.clear();		
 		initCells();		
 		repaint();
+	}
+
+	public void makeMove(int i, int j) {
+		tryMakeMove(allCells[i][j]);		
 	}
 
 }

@@ -48,6 +48,7 @@ public class Client implements Player {
 	private void getStartData(BufferedReader in) {
 		oppName = parser.parseName(in);
 		descriptor = parser.parseColor(in);
+		System.out.println("Client descriptor: " + descriptor);
 	}
 
 	private void runConnection() {
@@ -78,9 +79,10 @@ public class Client implements Player {
 	private void listenNewMove() {
 		String inputLine = null;
 		inputLine = parser.parseNewLine(in);
-		if (inputLine == "Game over")
+		if (inputLine.equalsIgnoreCase("Game over"))
 			processGameOver();
 		else {
+			System.out.println("Move: " + inputLine);
 			Cell move = parser.parseMove(inputLine);
 			makeMove(move);
 		}
@@ -88,20 +90,18 @@ public class Client implements Player {
 
 	// this method returns remote player move to the game field.
 	private void makeMove(Cell move) {
-		gameField.tryMakeMove(move);
+		int i = move.i_index;
+		int j = move.j_index;
+		gameField.makeMove(i, j);
 		if (gameField.movedSuccess) {
-			lastMove = move;
+			lastMove = gameField.allCells[i][j];
 			state = WAITING;
-		}
-		if (gameField.gameOver) {
-			state = GAMEOVER;
-			processGameOver();
 		}
 	}
 
-	private void processGameOver() {
-		String outputLine = serializer.serializeString("Game over");
-		out.println(outputLine);
+	public void processGameOver() {
+		state = GAMEOVER;
+		System.out.println("Client: game over");
 		try {
 			handleGOanswer();
 		} catch (IOException e) {
@@ -161,12 +161,17 @@ public class Client implements Player {
 				outputLine = serializer.serializeMove(cell);
 				out.println(outputLine);
 				state = SENDMOVE;
-			}
+			}			
 		}
 	}
 
 	public int getColor() {
 		return descriptor;
+	}
+
+	@Override
+	public void passAction() {
+		state = WAITING;	
 	}
 
 }

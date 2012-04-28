@@ -53,4 +53,16 @@ public class Human extends MouseAdapter implements Player {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void passAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void processGameOver() {
+		// TODO Auto-generated method stub
+		
+	}
 }
