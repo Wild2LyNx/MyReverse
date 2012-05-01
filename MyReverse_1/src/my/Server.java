@@ -152,11 +152,13 @@ public class Server implements Player {
 
 	private void handleGOanswer() {
 		String answer = parser.parseNewLine(in);
+		System.out.println("From client: " + answer);
 		boolean newGame = protocol.processGOanswer(answer);
 		if (newGame)
 			newGame();
 		else
 			try {
+				System.out.println("Bye");
 				breakConnection();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -167,6 +169,7 @@ public class Server implements Player {
 	private void newGame() {
 		state = WAITING;
 		gameField.newRound();
+		outputLine = serializer.serializeString("Start");
 	}
 
 	private void breakConnection() throws IOException {

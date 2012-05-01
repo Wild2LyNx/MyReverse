@@ -36,28 +36,27 @@ public class GameField extends JComponent {
 	ArrayList<Cell> blackStones = new ArrayList<Cell>();
 	ArrayList<Cell> whiteStones = new ArrayList<Cell>();
 	ArrayList<Cell> freeCells = new ArrayList<Cell>();
-	ArrayList<Cell> possibleCells = new ArrayList<Cell>();// Cells where at
-															// least one player
-															// can move exactly
-															// now
-	ArrayList<Cell> changeVector = new ArrayList<Cell>();// Vector of cells with
-															// stones in one
-															// direction, which
-															// will change color
-															// after move
 
-	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();// Vector of main
-															// arrays
-															// "allCells". From
-															// here we take main
-															// array to make
-															// undo action.
-	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();// Vector of main
-															// arrays
-															// "allCells". From
-															// here we take main
-															// array to make
-															// redo action.
+	/* Cells where at least one player can move exactly now */
+	ArrayList<Cell> possibleCells = new ArrayList<Cell>();
+
+	/*
+	 * Vector of cells with stones in one direction, which will change color
+	 * after move
+	 */
+	ArrayList<Cell> changeVector = new ArrayList<Cell>();
+
+	/*
+	 * Vector of main arrays "allCells". From here we take main array to make
+	 * undo action.
+	 */
+	Vector<Cell[][]> undoAllCells = new Vector<Cell[][]>();
+
+	/*
+	 * Vector of main arrays "allCells". From here we take main array to make
+	 * redo action.
+	 */
+	Vector<Cell[][]> redoAllCells = new Vector<Cell[][]>();
 
 	public GameField(JFrame f, JTextArea tArea, PlayersManager pm) {
 		this.frame = f;
@@ -489,7 +488,6 @@ public class GameField extends JComponent {
 
 	private void setPlayer() {
 		int d = moveCounter % 2;
-		System.out.println(d);
 		if (d == 0)
 			curPlayer = player1;
 		else if (d == 1)
@@ -625,22 +623,23 @@ public class GameField extends JComponent {
 			moveCounter++;
 			resetRedo();
 		}
-		System.out.println("Moved success: " + movedSuccess);		
+		System.out.println("Moved success: " + movedSuccess);
 		repaint();
 		if ((movedSuccess)) {
 			for (int i = 0; i < listeners.size(); i++) {
 				listeners.get(i).stateChanged(this, cell);
 			}
 			checkMoveIsPossible();
-			
-			if ((!gameOver)&&(!passMove)){
-			final Timer timer = new Timer(100, new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setPlayer();
-				}
-			});
-			timer.setRepeats(false);
-			timer.start();
+			if (gameOver) System.out.println("Game over");
+
+			if ((!gameOver) && (!passMove)) {
+				final Timer timer = new Timer(100, new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						setPlayer();
+					}
+				});
+				timer.setRepeats(false);
+				timer.start();
 			}
 		}
 	}
@@ -697,18 +696,20 @@ public class GameField extends JComponent {
 	}
 
 	public void newRound() {
+		frame.setVisible(false);
 		gameOver = false;
 		moveCounter = 0;
 		blackStones.clear();
 		whiteStones.clear();
 		freeCells.clear();
-		possibleCells.clear();		
-		initCells();		
+		possibleCells.clear();
+		initCells();
 		repaint();
+		frame.setVisible(true);
 	}
 
 	public void makeMove(int i, int j) {
-		tryMakeMove(allCells[i][j]);		
+		tryMakeMove(allCells[i][j]);
 	}
 
 }

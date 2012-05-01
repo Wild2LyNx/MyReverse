@@ -26,6 +26,7 @@ public class Client implements Player {
 	Parser parser = new Parser();
 	Serializer serializer = new Serializer();
 	private int state = START;
+	private boolean ready = false;
 
 	public Client(int pNumber, String hName, String pName) {
 		this.portNumber = pNumber;
@@ -35,9 +36,10 @@ public class Client implements Player {
 		runConnection();
 		getStartData(in);
 		sendPName();
-		if (parser.parseNewLine(in).equalsIgnoreCase("Start"))
+		if (parser.parseNewLine(in).contains("Start")) {
 			state = WAITING;
-		;
+			ready = true;
+		}
 	}
 
 	private void sendPName() {
@@ -71,9 +73,11 @@ public class Client implements Player {
 	// This method called from the game field for the remote player move
 	@Override
 	public void makeMove(GameField gameField) {
-		this.gameField = gameField;
-		state = MOVING;
-		listenNewMove();
+		if (ready) {
+			this.gameField = gameField;
+			state = MOVING;
+			listenNewMove();
+		}
 	}
 
 	private void listenNewMove() {
@@ -93,7 +97,9 @@ public class Client implements Player {
 		int i = move.i_index;
 		int j = move.j_index;
 		gameField.makeMove(i, j);
+		System.out.println("flag " + gameField.movedSuccess);
 		if (gameField.movedSuccess) {
+			System.out.println("Client: moved success");
 			lastMove = gameField.allCells[i][j];
 			state = WAITING;
 		}
@@ -101,7 +107,7 @@ public class Client implements Player {
 
 	public void processGameOver() {
 		state = GAMEOVER;
-		System.out.println("Client: game over");
+		ready = false;
 		try {
 			handleGOanswer();
 		} catch (IOException e) {
@@ -112,25 +118,24 @@ public class Client implements Player {
 
 	private void handleGOanswer() throws IOException {
 		String answer = parser.parseNewLine(in);
-		if (answer == States.regameSuggest) {
+		if (answer.contains(States.regameSuggest)) {
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(
 					System.in));
 			String fromUser = null;
 
 			System.out.println(answer);
 
-			
-				fromUser = stdIn.readLine();
-			
+			fromUser = stdIn.readLine();
+
 			if (fromUser != null) {
-				stdIn.close();				
+				stdIn.close();
 				if (fromUser.equalsIgnoreCase("y")) {
 					newGame();
-					out.println(fromUser);
+					out.println(serializer.serializeString(fromUser));
 				}
 
 				else {
-					out.println("n");
+					out.println(serializer.serializeString("n"));
 					breakConnection();
 				}
 			}
@@ -147,6 +152,14 @@ public class Client implements Player {
 	private void newGame() {
 		state = WAITING;
 		gameField.newRound();
+		waitForServer();
+	}
+
+	private void waitForServer() {
+		if (parser.parseNewLine(in).contains("Start")) {
+			state = WAITING;
+			ready = true;
+		}		
 	}
 
 	@Override
@@ -161,7 +174,7 @@ public class Client implements Player {
 				outputLine = serializer.serializeMove(cell);
 				out.println(outputLine);
 				state = SENDMOVE;
-			}			
+			}
 		}
 	}
 
@@ -171,7 +184,7 @@ public class Client implements Player {
 
 	@Override
 	public void passAction() {
-		state = WAITING;	
+		state = WAITING;
 	}
 
 }
