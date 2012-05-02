@@ -38,7 +38,7 @@ public class Protocol {
 	}
 
 	public boolean processGOanswer(String answer) {
-		if (answer.equalsIgnoreCase("y")){
+		if (answer.contains("y")){
 			state = WAITING;
 			return true;
 		}

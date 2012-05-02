@@ -170,6 +170,7 @@ public class Server implements Player {
 		state = WAITING;
 		gameField.newRound();
 		outputLine = serializer.serializeString("Start");
+		out.println(outputLine);
 	}
 
 	private void breakConnection() throws IOException {

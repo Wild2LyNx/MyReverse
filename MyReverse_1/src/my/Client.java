@@ -130,8 +130,9 @@ public class Client implements Player {
 			if (fromUser != null) {
 				stdIn.close();
 				if (fromUser.equalsIgnoreCase("y")) {
-					newGame();
-					out.println(serializer.serializeString(fromUser));
+					String outputLine = serializer.serializeString(fromUser);							
+					out.println(outputLine);
+					newGame();		
 				}
 
 				else {
@@ -156,9 +157,11 @@ public class Client implements Player {
 	}
 
 	private void waitForServer() {
+		System.out.println("Client waiting");
 		if (parser.parseNewLine(in).contains("Start")) {
 			state = WAITING;
 			ready = true;
+			System.out.println("Client ready");
 		}		
 	}
 
